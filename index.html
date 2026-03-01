@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Word Hero - SSP (P1–P12) v3.3</title>
+<title>Word Hero - SSP (P1–P12) v4</title>
 <style>
   :root{
     --bg:#0b1020;
@@ -11,11 +11,12 @@
     --panel2:rgba(255,255,255,.12);
     --bd:rgba(255,255,255,.14);
     --txt:#f6f7fb;
-    --mut:rgba(255,255,255,.7);
+    --mut:rgba(255,255,255,.72);
     --ok:#36c275;
     --bad:#ff5a5f;
     --pri:#7c5cff;
     --pri2:#21d4fd;
+    --gold:#ffcc66;
     --shadow: 0 12px 40px rgba(0,0,0,.35);
   }
   *{ box-sizing:border-box; }
@@ -29,7 +30,7 @@
       radial-gradient(900px 500px at 60% 90%, rgba(54,194,117,.18), transparent 60%),
       var(--bg);
   }
-  .wrap{ max-width: 1100px; margin: 0 auto; padding: 18px; }
+  .wrap{ max-width: 1180px; margin: 0 auto; padding: 18px; }
   .hero{
     display:flex; justify-content:space-between; align-items:flex-end; gap:14px; flex-wrap:wrap;
     padding: 16px 16px 10px;
@@ -50,8 +51,8 @@
     font-size: 13px;
     color: var(--txt);
   }
-  .grid{ display:grid; grid-template-columns: 360px 1fr; gap: 14px; margin-top: 14px; }
-  @media (max-width: 980px){ .grid{ grid-template-columns:1fr; } }
+  .grid{ display:grid; grid-template-columns: 390px 1fr; gap: 14px; margin-top: 14px; }
+  @media (max-width: 1020px){ .grid{ grid-template-columns:1fr; } }
 
   .card{
     border: 1px solid var(--bd);
@@ -71,6 +72,7 @@
     background: rgba(0,0,0,.18);
     cursor:pointer;
     transition: transform .06s ease, background .2s ease, border-color .2s ease;
+    user-select:none;
   }
   .btn:hover{ border-color: rgba(255,255,255,.28); }
   .btn:active{ transform: translateY(1px); }
@@ -78,7 +80,7 @@
     border:none;
     background: linear-gradient(135deg, var(--pri), var(--pri2));
     color:#081018;
-    font-weight: 700;
+    font-weight: 900;
   }
   .btn.ghost{ background: rgba(255,255,255,.06); }
   .btn.block{ width:100%; text-align:left; }
@@ -93,7 +95,7 @@
   }
   .mut{ color: var(--mut); font-size: 12px; }
   .list{
-    max-height: 340px;
+    max-height: 290px;
     overflow:auto;
     padding: 8px;
     border: 1px solid rgba(255,255,255,.10);
@@ -120,6 +122,7 @@
     background: rgba(0,0,0,.12);
     font-size: 13px;
   }
+  .badge.gold{ border-color: rgba(255,204,102,.38); background: rgba(255,204,102,.08); }
   .kbd{
     font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas;
     font-size: 12px;
@@ -128,22 +131,84 @@
     border-radius: 8px;
     background: rgba(0,0,0,.18);
   }
+
+  /* Modal */
+  .modal{
+    position: fixed; inset:0;
+    background: rgba(0,0,0,.55);
+    display:none; align-items:center; justify-content:center;
+    padding: 18px;
+    z-index: 99;
+  }
+  .modal.open{ display:flex; }
+  .panel{
+    width: min(980px, 100%);
+    max-height: 88vh;
+    overflow:auto;
+    border:1px solid rgba(255,255,255,.18);
+    border-radius: 22px;
+    background: linear-gradient(180deg, rgba(15,18,35,.92), rgba(10,12,24,.92));
+    box-shadow: var(--shadow);
+    padding: 14px;
+  }
+  .panel h2{ margin: 6px 0 10px; font-size: 18px; }
+  .panel .top{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+  .mapgrid{ display:grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  @media (max-width: 900px){ .mapgrid{ grid-template-columns: repeat(2,1fr);} }
+  .tile{
+    border:1px solid rgba(255,255,255,.14);
+    border-radius: 18px;
+    padding: 12px;
+    background: rgba(255,255,255,.06);
+  }
+  .tile.locked{ opacity:.55; }
+  .tile .t{ font-weight:900; font-size: 15px; }
+  .tile .s{ margin-top:6px; }
+  .stars{ color: var(--gold); letter-spacing: 2px; }
+  .tinybar{ height:8px; border-radius:999px; background: rgba(255,255,255,.10); overflow:hidden; margin-top:8px;}
+  .tinybar > div{ height:100%; width:0%; background: linear-gradient(90deg, rgba(54,194,117,.9), rgba(33,212,253,.9)); }
+  .badges{ display:grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  @media (max-width: 900px){ .badges{ grid-template-columns: repeat(1,1fr);} }
+  .bcard{
+    border:1px solid rgba(255,255,255,.14);
+    border-radius: 18px;
+    padding: 12px;
+    background: rgba(255,255,255,.06);
+    display:flex; gap:10px; align-items:flex-start;
+  }
+  .bcard.locked{ opacity:.55; }
+  .bicon{ font-size: 22px; width: 34px; text-align:center; }
+  .bname{ font-weight:900; }
+  .confetti{
+    position: fixed; inset: 0; pointer-events:none; overflow:hidden; z-index: 120;
+  }
+  .confetti i{
+    position:absolute; top:-10px;
+    width: 10px; height: 14px;
+    background: rgba(255,255,255,.9);
+    opacity:.9;
+    border-radius: 3px;
+    animation: fall linear forwards;
+  }
+  @keyframes fall{
+    to{ transform: translateY(110vh) rotate(720deg); opacity: .0; }
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="hero">
     <div>
-      <h1>Word Hero 🧠⚡（SSP P1–P12）v3.3</h1>
-      <div class="sub">更好看｜更好听｜更多玩法：选择题 / 拼写 / 听力选择 / 速度挑战 / 错题加权复习</div>
+      <h1>Word Hero 🧠⚡（SSP P1–P12）v4</h1>
+      <div class="sub">给 Ian 的闯关版：🗺️ 地图解锁 + 🏅 勋章收集 + ⏱️ 冲刺破纪录（更像游戏，少点“做题味”）</div>
     </div>
     <div class="pills">
+      <span class="pill" id="statPlayer">Ian</span>
       <span class="pill" id="statLevel">Lv 1</span>
       <span class="pill" id="statXP">XP 0/20</span>
       <span class="pill" id="statScore">Score 0</span>
       <span class="pill" id="statStreak">Streak 0</span>
       <span class="pill" id="statToday">Daily 0/10</span>
-      <span class="pill" id="statWrong">Wrong 0</span>
     </div>
   </div>
 
@@ -152,24 +217,31 @@
     <div class="card">
       <div class="hd">
         <div class="row">
-          <button class="btn primary" onclick="startDaily()">每日挑战（10题）</button>
-          <button class="btn ghost" onclick="startWrong()">错题本</button>
+          <button class="btn primary" onclick="openMap()">🗺️ 闯关地图</button>
+          <button class="btn ghost" onclick="openBadges()">🏅 勋章墙</button>
+          <button class="btn" onclick="renamePlayer()">✍️ 改名字</button>
         </div>
         <div style="height:10px"></div>
         <div class="row">
+          <button class="btn primary" onclick="startDaily()">每日挑战（10题）</button>
+          <button class="btn ghost" onclick="startWrong()">错题本</button>
           <button class="btn" onclick="startSpeed()">⏱ 60秒冲刺</button>
           <button class="btn" onclick="startFlash()">🃏 闪卡</button>
         </div>
       </div>
       <div class="bd">
+        <div class="badge gold">🎯 解锁规则：每页至少 <b>20题</b> 且正确率 ≥ <b>80%</b> → 解锁下一页</div>
+        <div style="height:10px"></div>
+
         <div class="badge">🎮 等级：<b id="lvText">1</b>　|　连胜奖励：连胜 ≥ 5 额外 +1 XP</div>
         <div style="height:10px"></div>
         <div class="bar"><div id="xpBar"></div></div>
         <div class="mut" style="margin-top:8px">快捷键：<span class="kbd">Enter</span> 下一题/提交拼写　<span class="kbd">Space</span> 播放发音</div>
 
         <div style="height:14px"></div>
-        <div class="mut">按页练：</div>
+        <div class="mut">当前页：</div>
         <select id="pageSelect" onchange="renderList()"></select>
+
         <div class="row" style="margin-top:10px">
           <button class="btn primary" onclick="startPage()">开始这一页</button>
           <button class="btn" onclick="startAll()">全量随机</button>
@@ -181,7 +253,7 @@
 
         <div style="height:14px"></div>
         <details>
-          <summary class="mut">⚙️ 语音设置（强烈建议调一下）</summary>
+          <summary class="mut">⚙️ 语音设置（建议选 Alex/Samantha）</summary>
           <div style="height:10px"></div>
           <div class="mut">Voice</div>
           <select id="voiceSelect"></select>
@@ -226,16 +298,50 @@
           <button class="btn" onclick="showAnswer()">👀 答案</button>
         </div>
         <div style="height:12px"></div>
-        <div class="mut">规则：错题会加权，更频繁出现；答对会降权。每日挑战 10 题打卡。</div>
+        <div class="mut">规则：错题会加权更常出现；答对会降权。每日挑战 10 题打卡。</div>
       </div>
     </div>
   </div>
 </div>
 
+<div class="modal" id="mapModal" onclick="closeOnBackdrop(event,'mapModal')">
+  <div class="panel">
+    <div class="top">
+      <div>
+        <h2>🗺️ 闯关地图（P1 → P12）</h2>
+        <div class="mut">每页：≥20题 且 ≥80% 解锁下一页。星级：80%=⭐ / 90%=⭐⭐ / 95%=⭐⭐⭐</div>
+      </div>
+      <div class="row">
+        <button class="btn" onclick="closeModal('mapModal')">关闭</button>
+      </div>
+    </div>
+    <div style="height:10px"></div>
+    <div class="mapgrid" id="mapGrid"></div>
+  </div>
+</div>
+
+<div class="modal" id="badgeModal" onclick="closeOnBackdrop(event,'badgeModal')">
+  <div class="panel">
+    <div class="top">
+      <div>
+        <h2>🏅 勋章墙</h2>
+        <div class="mut">让孩子“有收获感”：每天打卡、连胜、破纪录、清空错题……都能拿勋章。</div>
+      </div>
+      <div class="row">
+        <button class="btn" onclick="closeModal('badgeModal')">关闭</button>
+      </div>
+    </div>
+    <div style="height:10px"></div>
+    <div class="badges" id="badgeGrid"></div>
+  </div>
+</div>
+
+<div class="confetti" id="confetti"></div>
+
 <script src="./questions.js"></script>
 <script>
 /** -------- Storage -------- **/
-const KEY = "wordhero_ssp_v3.3";
+const KEY = "wordhero_ssp_v4";
 function todayKey(){
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
@@ -243,10 +349,14 @@ function todayKey(){
 function loadState(){
   const s = localStorage.getItem(KEY);
   if(!s) return {
+    player: "Ian",
     score: 0, streak: 0,
     xp: 0, level: 1,
-    wrongWeights: {},  // qid -> weight (2..5)
-    today: { date: todayKey(), done: 0, correct: 0 },
+    wrongWeights: {}, // qid -> weight
+    today: { date: todayKey(), done: 0, correct: 0, win: false },
+    pageStats: {}, // Pn -> {attempt, correct}
+    unlocked: { P1: true }, // map
+    badges: {}, // badgeId -> true
     tts: { enabled: true, voiceURI: "", rate: 0.95, pitch: 1.0 },
     highScore: 0
   };
@@ -254,20 +364,19 @@ function loadState(){
 }
 let state = loadState() || loadState();
 if(state.today?.date !== todayKey()){
-  state.today = { date: todayKey(), done: 0, correct: 0 };
+  state.today = { date: todayKey(), done: 0, correct: 0, win: false };
 }
 function saveState(){ localStorage.setItem(KEY, JSON.stringify(state)); }
 
 /** -------- UI refs -------- **/
+const statPlayer = document.getElementById("statPlayer");
 const statLevel = document.getElementById("statLevel");
 const statXP = document.getElementById("statXP");
 const statScore = document.getElementById("statScore");
 const statStreak = document.getElementById("statStreak");
 const statToday = document.getElementById("statToday");
-const statWrong = document.getElementById("statWrong");
 const lvText = document.getElementById("lvText");
 const xpBar = document.getElementById("xpBar");
-
 const questionEl = document.getElementById("question");
 const optionsEl = document.getElementById("options");
 const msgEl = document.getElementById("msg");
@@ -277,7 +386,6 @@ const pageTag = document.getElementById("pageTag");
 const speedTag = document.getElementById("speedTag");
 const speedTimeEl = document.getElementById("speedTime");
 const highScoreEl = document.getElementById("highScore");
-
 const pageSelect = document.getElementById("pageSelect");
 const vocabList = document.getElementById("vocabList");
 const voiceSelect = document.getElementById("voiceSelect");
@@ -291,37 +399,71 @@ const ttsBtn = document.getElementById("ttsBtn");
 const PAGES = Object.keys(window.SSP_DATA).sort((a,b)=>Number(a.slice(1))-Number(b.slice(1)));
 const QUESTIONS = window.SSP_QUESTIONS;
 
-/** -------- Stats & XP -------- **/
+/** -------- Utils -------- **/
+function msg(t){ msgEl.textContent = t; }
+function normalize(s){ return String(s||"").trim().replace(/\s+/g," ").toLowerCase(); }
+function ensurePageStats(p){
+  if(!state.pageStats[p]) state.pageStats[p] = { attempt: 0, correct: 0 };
+}
+function pageAcc(p){
+  const s = state.pageStats[p] || {attempt:0, correct:0};
+  return s.attempt ? (s.correct / s.attempt) : 0;
+}
+function starsFor(p){
+  const s = state.pageStats[p] || {attempt:0, correct:0};
+  if(s.attempt < 20) return 0;
+  const a = s.correct / s.attempt;
+  if(a >= 0.95) return 3;
+  if(a >= 0.90) return 2;
+  if(a >= 0.80) return 1;
+  return 0;
+}
+
+/** -------- XP/Level -------- **/
 const XP_PER_LEVEL = 20;
 function addXP(n){
   state.xp += n;
   while(state.xp >= XP_PER_LEVEL){
     state.xp -= XP_PER_LEVEL;
     state.level += 1;
+    confetti();
     msg("🎉 升级啦！Level " + state.level);
+    unlockBadge("level_5", state.level >= 5);
+    unlockBadge("level_10", state.level >= 10);
   }
 }
 function renderStats(){
+  statPlayer.textContent = state.player || "Ian";
   statLevel.textContent = `Lv ${state.level}`;
   statXP.textContent = `XP ${state.xp}/${XP_PER_LEVEL}`;
   statScore.textContent = `Score ${state.score}`;
   statStreak.textContent = `Streak ${state.streak}`;
   statToday.textContent = `Daily ${state.today.done}/10`;
-  statWrong.textContent = `Wrong ${Object.keys(state.wrongWeights).length}`;
   lvText.textContent = state.level;
   xpBar.style.width = `${Math.round((state.xp/XP_PER_LEVEL)*100)}%`;
   highScoreEl.textContent = state.highScore || 0;
 }
-function msg(t){ msgEl.textContent = t; }
 
-/** -------- TTS (better voice) -------- **/
+/** -------- Confetti (lightweight) -------- **/
+function confetti(){
+  const root = document.getElementById("confetti");
+  root.innerHTML = "";
+  const n = 60;
+  for(let i=0;i<n;i++){
+    const el = document.createElement("i");
+    el.style.left = (Math.random()*100) + "vw";
+    el.style.animationDuration = (1.6 + Math.random()*1.4) + "s";
+    el.style.transform = `translateY(0) rotate(${Math.random()*360}deg)`;
+    el.style.background = `hsla(${Math.floor(Math.random()*360)}, 90%, 70%, .9)`;
+    root.appendChild(el);
+  }
+  setTimeout(()=> root.innerHTML="", 2400);
+}
+
+/** -------- TTS -------- **/
 let voices = [];
 function pickBestVoice(){
-  // Prefer high quality voices commonly found on Apple devices
-  const prefer = [
-    /Alex/i, /Samantha/i, /Karen/i, /Daniel/i, /Moira/i,
-    /en-US/i, /en_GB/i, /English/i
-  ];
+  const prefer = [/Alex/i, /Samantha/i, /Karen/i, /Daniel/i, /Moira/i, /en-US/i, /en_GB/i, /English/i];
   for(const r of prefer){
     const v = voices.find(v => r.test(v.name) || r.test(v.voiceURI) || r.test(v.lang));
     if(v) return v;
@@ -332,7 +474,6 @@ function loadVoices(){
   if(!("speechSynthesis" in window)) return;
   voices = speechSynthesis.getVoices() || [];
   voiceSelect.innerHTML = "";
-  // filter to English first but keep all as fallback
   const ordered = [...voices].sort((a,b)=>{
     const aEn = /^en/i.test(a.lang) ? 0 : 1;
     const bEn = /^en/i.test(b.lang) ? 0 : 1;
@@ -344,16 +485,12 @@ function loadVoices(){
     opt.textContent = `${v.name} (${v.lang})`;
     voiceSelect.appendChild(opt);
   });
-
-  // set initial selection
   let v = ordered.find(x=> x.voiceURI === state.tts.voiceURI);
   if(!v){
     v = pickBestVoice();
     if(v) state.tts.voiceURI = v.voiceURI;
   }
-  if(state.tts.voiceURI){
-    voiceSelect.value = state.tts.voiceURI;
-  }
+  if(state.tts.voiceURI) voiceSelect.value = state.tts.voiceURI;
   rateSlider.value = state.tts.rate || 0.95;
   pitchSlider.value = state.tts.pitch || 1.0;
   rateText.textContent = rateSlider.value;
@@ -365,7 +502,6 @@ if("speechSynthesis" in window){
   speechSynthesis.onvoiceschanged = loadVoices;
   setTimeout(loadVoices, 50);
 }
-
 function speak(text){
   if(!("speechSynthesis" in window)) return;
   if(!state.tts.enabled) return;
@@ -380,30 +516,12 @@ function speak(text){
     speechSynthesis.speak(u);
   }catch(e){}
 }
-function playAudio(){
-  const q = currentQuestion();
-  if(q && q.en) speak(q.en);
-}
+function playAudio(){ const q = currentQuestion(); if(q && q.en) speak(q.en); }
 function testVoice(){ speak("Good job! Keep going!"); }
-function toggleTTS(){
-  state.tts.enabled = !state.tts.enabled;
-  ttsBtn.textContent = `TTS: ${state.tts.enabled ? "ON" : "OFF"}`;
-  saveState();
-}
-voiceSelect.addEventListener("change", ()=>{
-  state.tts.voiceURI = voiceSelect.value;
-  saveState();
-});
-rateSlider.addEventListener("input", ()=>{
-  state.tts.rate = Number(rateSlider.value);
-  rateText.textContent = rateSlider.value;
-  saveState();
-});
-pitchSlider.addEventListener("input", ()=>{
-  state.tts.pitch = Number(pitchSlider.value);
-  pitchText.textContent = pitchSlider.value;
-  saveState();
-});
+function toggleTTS(){ state.tts.enabled = !state.tts.enabled; ttsBtn.textContent = `TTS: ${state.tts.enabled ? "ON" : "OFF"}`; saveState(); }
+voiceSelect.addEventListener("change", ()=>{ state.tts.voiceURI = voiceSelect.value; saveState(); });
+rateSlider.addEventListener("input", ()=>{ state.tts.rate = Number(rateSlider.value); rateText.textContent = rateSlider.value; saveState(); });
+pitchSlider.addEventListener("input", ()=>{ state.tts.pitch = Number(pitchSlider.value); pitchText.textContent = pitchSlider.value; saveState(); });
 
 /** -------- Vocab list -------- **/
 function initPages(){
@@ -414,6 +532,9 @@ function initPages(){
     opt.textContent = `${p} · ${SSP_DATA[p].title || ""}`;
     pageSelect.appendChild(opt);
   }
+  // default to first locked/unlocked page selection
+  const firstUnlocked = PAGES.find(p=> isUnlocked(p)) || "P1";
+  pageSelect.value = firstUnlocked;
 }
 function renderList(){
   const p = pageSelect.value;
@@ -422,20 +543,131 @@ function renderList(){
   items.forEach(it=>{
     const b = document.createElement("button");
     b.className = "btn block";
-    b.innerHTML = `<div style="font-weight:700">${it.en}</div><div class="mut">${it.zh || ""}</div>`;
+    b.innerHTML = `<div style="font-weight:900">${it.en}</div><div class="mut">${it.zh || ""}</div>`;
     b.onclick = ()=> speak(it.en);
     vocabList.appendChild(b);
   });
 }
 
-/** -------- Quiz engine -------- **/
+/** -------- Map (unlock) -------- **/
+function isUnlocked(p){
+  if(p === "P1") return true;
+  return !!(state.unlocked && state.unlocked[p]);
+}
+function unlockNext(p){
+  const n = Number(p.slice(1));
+  const next = "P" + (n+1);
+  if(PAGES.includes(next)){
+    state.unlocked = state.unlocked || {P1:true};
+    if(!state.unlocked[next]){
+      state.unlocked[next] = true;
+      confetti();
+      msg(`🔓 解锁成功：${next}！去闯关地图看看。`);
+      unlockBadge("unlock_3", Object.keys(state.unlocked).length >= 3);
+      unlockBadge("unlock_6", Object.keys(state.unlocked).length >= 6);
+      unlockBadge("unlock_12", Object.keys(state.unlocked).length >= 12);
+    }
+  } else {
+    unlockBadge("all_clear", true);
+  }
+  saveState();
+}
+function maybeUnlock(p){
+  ensurePageStats(p);
+  const s = state.pageStats[p];
+  if(s.attempt >= 20 && (s.correct / s.attempt) >= 0.80){
+    unlockNext(p);
+  }
+}
+function openMap(){ renderMap(); openModal("mapModal"); }
+function renderMap(){
+  const root = document.getElementById("mapGrid");
+  root.innerHTML = "";
+  for(const p of PAGES){
+    ensurePageStats(p);
+    const st = state.pageStats[p];
+    const acc = st.attempt ? Math.round((st.correct/st.attempt)*100) : 0;
+    const stars = starsFor(p);
+    const unlocked = isUnlocked(p);
+    const tile = document.createElement("div");
+    tile.className = "tile" + (unlocked ? "" : " locked");
+    const starTxt = stars ? "⭐".repeat(stars) : "—";
+    const need = unlocked ? "" : "🔒 未解锁";
+    tile.innerHTML = `
+      <div class="t">${p} · ${SSP_DATA[p].title || ""}</div>
+      <div class="s mut">进度：${st.attempt}题 · 正确率 ${acc}% · <span class="stars">${starTxt}</span> ${need}</div>
+      <div class="tinybar"><div style="width:${Math.min(100, (st.attempt/20)*100)}%"></div></div>
+      <div class="row" style="margin-top:10px">
+        <button class="btn primary" ${unlocked ? "" : "disabled"}>开始</button>
+        <button class="btn" ${unlocked ? "" : "disabled"}>复习错题</button>
+      </div>
+    `;
+    const [startBtn, wrongBtn] = tile.querySelectorAll("button");
+    startBtn.onclick = ()=>{ closeModal("mapModal"); pageSelect.value = p; renderList(); startPage(); };
+    wrongBtn.onclick = ()=>{ closeModal("mapModal"); startWrong(); };
+    root.appendChild(tile);
+  }
+}
+
+/** -------- Badges -------- **/
+const BADGES = [
+  {id:"daily_7", icon:"📅", name:"7日打卡", desc:"累计完成每日挑战 7 天"},
+  {id:"daily_14", icon:"🗓️", name:"14日打卡", desc:"累计完成每日挑战 14 天"},
+  {id:"perfect_day", icon:"💯", name:"完美打卡", desc:"每日挑战 10 题全对"},
+  {id:"streak_10", icon:"🔥", name:"10连胜", desc:"连续答对 10 题"},
+  {id:"speed_15", icon:"⏱️", name:"冲刺破15", desc:"60秒冲刺单局 ≥ 15 分"},
+  {id:"speed_20", icon:"⚡", name:"冲刺破20", desc:"60秒冲刺单局 ≥ 20 分"},
+  {id:"wrong_zero", icon:"🧹", name:"错题清零", desc:"错题本为空"},
+  {id:"unlock_3", icon:"🗝️", name:"解锁到P3", desc:"解锁到第 3 页"},
+  {id:"unlock_6", icon:"🗝️", name:"解锁到P6", desc:"解锁到第 6 页"},
+  {id:"unlock_12", icon:"🏁", name:"解锁到P12", desc:"解锁到第 12 页"},
+  {id:"level_5", icon:"🎖️", name:"Level 5", desc:"等级达到 5"},
+  {id:"level_10", icon:"🏅", name:"Level 10", desc:"等级达到 10"},
+  {id:"all_clear", icon:"👑", name:"全通关", desc:"P1–P12 全部解锁"},
+];
+
+function unlockBadge(id, cond=true){
+  if(!cond) return;
+  state.badges = state.badges || {};
+  if(!state.badges[id]){
+    state.badges[id] = true;
+    confetti();
+    msg("🏅 获得勋章：" + (BADGES.find(b=>b.id===id)?.name || id));
+    saveState();
+  }
+}
+function openBadges(){ renderBadges(); openModal("badgeModal"); }
+function renderBadges(){
+  const root = document.getElementById("badgeGrid");
+  root.innerHTML = "";
+  for(const b of BADGES){
+    const got = !!(state.badges && state.badges[b.id]);
+    const el = document.createElement("div");
+    el.className = "bcard" + (got ? "" : " locked");
+    el.innerHTML = `
+      <div class="bicon">${b.icon}</div>
+      <div>
+        <div class="bname">${b.name} ${got ? "✅" : "🔒"}</div>
+        <div class="mut">${b.desc}</div>
+      </div>
+    `;
+    root.appendChild(el);
+  }
+}
+
+/** -------- Modal helpers -------- **/
+function openModal(id){ document.getElementById(id).classList.add("open"); }
+function closeModal(id){ document.getElementById(id).classList.remove("open"); }
+function closeOnBackdrop(e,id){ if(e.target.id === id) closeModal(id); }
+
+/** -------- Engine -------- **/
 let mode = "idle"; // daily | page | all | wrong | speed | flash
 let page = null;
 let pool = [];
 let locked = false;
 let currentIdx = -1;
 let answerCache = "";
-let speed = { running:false, left:60, timer:null, score0:0 };
+let speed = { running:false, left:60, timer:null, score0:0, baseScore:0 };
 
 function setMode(m, p=null){
   mode = m; page = p;
@@ -443,41 +675,34 @@ function setMode(m, p=null){
   pageTag.textContent = `Page: ${page || "-"}`;
   speedTag.style.display = (mode === "speed") ? "" : "none";
 }
-
 function buildPool(){
   let idxs = [];
   if(mode === "page" && page){
     idxs = QUESTIONS.map((q,i)=> q.p === page ? i : -1).filter(i=>i>=0);
   } else if(mode === "wrong"){
-    const set = new Set(Object.keys(state.wrongWeights));
+    const set = new Set(Object.keys(state.wrongWeights||{}));
     idxs = QUESTIONS.map((q,i)=> set.has(q.id) ? i : -1).filter(i=>i>=0);
   } else {
     idxs = QUESTIONS.map((_,i)=> i);
   }
-
   pool = [];
   for(const i of idxs){
     const q = QUESTIONS[i];
-    const w = state.wrongWeights[q.id] || 1;
+    const w = (state.wrongWeights && state.wrongWeights[q.id]) || 1;
     for(let k=0;k<w;k++) pool.push(i);
   }
   if(pool.length === 0) pool = idxs.length ? idxs.slice() : QUESTIONS.map((_,i)=>i);
 }
-function pick(){
-  return pool[Math.floor(Math.random() * pool.length)];
-}
-function currentQuestion(){
-  if(currentIdx < 0) return null;
-  return QUESTIONS[currentIdx];
-}
-function normalize(s){
-  return String(s||"").trim().replace(/\s+/g," ").toLowerCase();
-}
+function pick(){ return pool[Math.floor(Math.random() * pool.length)]; }
+function currentQuestion(){ if(currentIdx < 0) return null; return QUESTIONS[currentIdx]; }
+
 function markWrong(id){
+  state.wrongWeights = state.wrongWeights || {};
   const w = state.wrongWeights[id] || 1;
   state.wrongWeights[id] = Math.min(5, w+1);
 }
 function markRight(id){
+  state.wrongWeights = state.wrongWeights || {};
   const w = state.wrongWeights[id] || 1;
   const nw = Math.max(1, w-1);
   if(nw === 1) delete state.wrongWeights[id];
@@ -491,10 +716,7 @@ function renderQuestion(){
   msgEl.textContent = "";
   answerCache = "";
 
-  if(mode === "flash"){
-    renderFlash();
-    return;
-  }
+  if(mode === "flash"){ renderFlash(); return; }
 
   currentIdx = pick();
   const q = currentQuestion();
@@ -511,7 +733,6 @@ function renderQuestion(){
       optionsEl.appendChild(b);
     });
     answerCache = `答案：${q.options[q.answer_index]}\n英文：${q.en}`;
-    // speak for listen question or just helpful
     if(q.type === "mcq_listen2zh") speak(q.en);
   } else if(q.type === "spell_zh2en"){
     const inp = document.createElement("input");
@@ -535,36 +756,47 @@ function afterAnswer(correct){
   const q = currentQuestion();
   if(!q) return;
 
+  // page stats
+  if(q.p){
+    ensurePageStats(q.p);
+    state.pageStats[q.p].attempt += 1;
+    if(correct) state.pageStats[q.p].correct += 1;
+    maybeUnlock(q.p);
+  }
+
   if(correct){
     state.score += 1;
     state.streak += 1;
-    // XP: base 1, streak bonus
     addXP(1 + (state.streak>=5 ? 1 : 0));
     markRight(q.id);
+    if(state.streak >= 10) unlockBadge("streak_10", true);
   } else {
     state.streak = 0;
     markWrong(q.id);
   }
 
+  // daily
   if(mode === "daily"){
     state.today.done += 1;
     if(correct) state.today.correct += 1;
+    if(state.today.done >= 10 && !state.today.win){
+      state.today.win = true;
+      // perfect day?
+      if(state.today.correct === 10) unlockBadge("perfect_day", true);
+      confetti();
+      msg(`✅ 今日打卡完成：${state.today.correct}/10`);
+    }
   }
-  if(mode === "speed"){
-    // keep timer running; no daily count
+
+  // wrong zero badge
+  if(Object.keys(state.wrongWeights||{}).length === 0){
+    unlockBadge("wrong_zero", true);
   }
 
   saveState();
   renderStats();
   nextBtn.disabled = false;
-
-  if(mode === "daily" && state.today.done >= 10){
-    nextBtn.textContent = "今日完成 ✅（继续可练习）";
-  } else if(mode === "speed"){
-    nextBtn.textContent = "继续 ▶";
-  } else {
-    nextBtn.textContent = "下一题 ▶";
-  }
+  nextBtn.textContent = (mode === "daily" && state.today.done >= 10) ? "今日完成 ✅（继续可练习）" : "下一题 ▶";
 }
 
 function answerMCQ(choice, btn){
@@ -581,8 +813,6 @@ function answerMCQ(choice, btn){
     btn.classList.add("bad");
     msg("❌ 再来！这题会更常出现。");
   }
-
-  // speak English for reinforcement except listen mode already played
   if(q.en) speak(q.en);
   afterAnswer(correct);
 }
@@ -621,11 +851,15 @@ function showAnswer(){
 
 /** -------- Modes -------- **/
 function startDaily(){ setMode("daily"); buildPool(); renderQuestion(); }
-function startPage(){ const p = pageSelect.value; setMode("page", p); buildPool(); renderQuestion(); }
+function startPage(){
+  const p = pageSelect.value;
+  if(!isUnlocked(p)){ msg("🔒 这一页还没解锁。去闯关地图看看解锁规则。"); confetti(); return; }
+  setMode("page", p); buildPool(); renderQuestion();
+}
 function startAll(){ setMode("all"); buildPool(); renderQuestion(); }
 function startWrong(){
   setMode("wrong"); buildPool(); renderQuestion();
-  if(Object.keys(state.wrongWeights).length === 0) msg("错题本为空。先做几题再来 😄");
+  if(Object.keys(state.wrongWeights||{}).length === 0) msg("错题本为空。先做几题再来 😄");
 }
 
 /** Speed run 60s **/
@@ -636,26 +870,28 @@ function startSpeed(){
   speedTimeEl.textContent = speed.left;
   msg("⏱ 开始！60 秒内尽量多答对。");
   if(speed.timer) clearInterval(speed.timer);
+  speed.baseScore = state.score;
   speed.timer = setInterval(()=>{
     speed.left -= 1;
     speedTimeEl.textContent = speed.left;
     if(speed.left <= 0){
       clearInterval(speed.timer);
       speed.running = false;
-      // high score by delta score during run
-      const runScore = state.score - speed.score0;
+      const runScore = state.score - speed.baseScore;
       if(runScore > (state.highScore||0)){
         state.highScore = runScore;
         saveState();
         renderStats();
+        confetti();
         msg("🏆 新纪录！High Score: " + runScore);
       } else {
         msg("结束！本局得分: " + runScore);
       }
+      if(runScore >= 15) unlockBadge("speed_15", true);
+      if(runScore >= 20) unlockBadge("speed_20", true);
       nextBtn.disabled = true;
     }
   }, 1000);
-  speed.score0 = state.score;
   buildPool();
   renderQuestion();
 }
@@ -664,8 +900,8 @@ function startSpeed(){
 let flash = { idxs: [], pos: 0, show:false };
 function startFlash(){
   setMode("flash", pageSelect.value);
-  // flash uses page pool only for focus; if none, all
   const p = pageSelect.value;
+  if(!isUnlocked(p)){ msg("🔒 这一页还没解锁。"); return; }
   flash.idxs = QUESTIONS.map((q,i)=> q.p === p && q.type==="mcq_en2zh" ? i : -1).filter(i=>i>=0);
   if(flash.idxs.length === 0) flash.idxs = QUESTIONS.map((q,i)=> q.type==="mcq_en2zh" ? i : -1).filter(i=>i>=0);
   flash.pos = 0;
@@ -678,7 +914,7 @@ function renderFlash(){
   const i = flash.idxs[flash.pos % flash.idxs.length];
   const q = QUESTIONS[i];
   const en = q.en, zh = q.zh;
-  questionEl.textContent = flash.show ? `${en}\n\n${zh}` : `${en}\n\n(点击“翻面”看中文)`;
+  questionEl.textContent = flash.show ? `${en}\n\n${zh}` : `${en}\n\n(点“翻面”看中文)`;
   speak(en);
 
   const row = document.createElement("div");
@@ -704,12 +940,26 @@ function renderFlash(){
   msg(`闪卡 ${flash.pos+1}/${flash.idxs.length}`);
 }
 
+/** -------- Daily streak tracking (days completed) -------- **/
+function bumpDailyBadges(){
+  // Count days completed stored in localStorage log
+  const k = KEY + "_days";
+  const log = JSON.parse(localStorage.getItem(k) || "{}"); // date -> true
+  if(state.today.done >= 10){
+    log[state.today.date] = true;
+    localStorage.setItem(k, JSON.stringify(log));
+  }
+  const days = Object.keys(log).length;
+  unlockBadge("daily_7", days >= 7);
+  unlockBadge("daily_14", days >= 14);
+}
+
 /** -------- Import/Export -------- **/
 function exportProgress(){
   const blob = new Blob([JSON.stringify(state, null, 2)], {type:"application/json"});
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = "wordhero_ssp_progress_v3.3.json";
+  a.download = "wordhero_ssp_progress_v4.json";
   a.click();
   URL.revokeObjectURL(a.href);
 }
@@ -724,37 +974,66 @@ function importProgress(){
       const obj = JSON.parse(txt);
       state = obj;
       if(state.today?.date !== todayKey()){
-        state.today = { date: todayKey(), done: 0, correct: 0 };
+        state.today = { date: todayKey(), done: 0, correct: 0, win: false };
       }
-      saveState(); renderStats();
+      saveState(); renderStats(); renderMap(); renderBadges();
       msg("✅ 已导入进度");
     }catch(e){ msg("❌ 导入失败：文件格式不对"); }
   };
   inp.click();
 }
 function resetProgress(){
-  if(!confirm("确定重置吗？分数/错题/等级都会清空")) return;
+  if(!confirm("确定重置吗？分数/错题/等级/地图/勋章都会清空")) return;
   localStorage.removeItem(KEY);
+  localStorage.removeItem(KEY + "_days");
   state = loadState();
   saveState();
-  renderStats();
+  renderStats(); renderMap(); renderBadges();
   msg("已重置。");
+}
+
+/** -------- Player name -------- **/
+function renamePlayer(){
+  const n = prompt("给玩家起个名字（例如 Ian）", state.player || "Ian");
+  if(!n) return;
+  state.player = n.slice(0,20);
+  saveState(); renderStats();
 }
 
 /** -------- Keyboard -------- **/
 document.addEventListener("keydown", (e)=>{
   if(e.code === "Space"){ e.preventDefault(); playAudio(); }
   if(e.key === "Enter"){
-    if(!nextBtn.disabled){ next(); return; }
+    if(!nextBtn.disabled){ next(); bumpDailyBadges(); return; }
     const spell = document.getElementById("spellInput");
-    if(spell && mode !== "flash"){ answerSpell(); }
+    if(spell && mode !== "flash"){ answerSpell(); bumpDailyBadges(); }
   }
 });
 
 /** -------- Init -------- **/
+function initUnlocked(){
+  state.unlocked = state.unlocked || {P1:true};
+  // if state has pageStats meeting unlock criteria, unlock accordingly
+  for(const p of PAGES){
+    ensurePageStats(p);
+    const s = state.pageStats[p];
+    if(p !== "P1" && !state.unlocked[p]){
+      // unlocked only if previous page achieved requirement
+      // keep existing unlocked
+    }
+    if(s.attempt >= 20 && (s.correct/s.attempt) >= 0.80){
+      // unlock next
+      unlockNext(p);
+    }
+  }
+  saveState();
+}
+initUnlocked();
 initPages();
 renderList();
 renderStats();
+renderMap();
+renderBadges();
 loadVoices();
 saveState();
 </script>

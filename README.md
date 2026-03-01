@@ -1,6 +1,10 @@
-# Word Hero – SSP v3.3 (Word-level extraction)
+# Word Hero – SSP v4 (Map + Badges)
 
-This build reconstructs English phrases using PDF word-level extraction (PyMuPDF `get_text("words")`),
-so spaces between words are preserved exactly as in the PDF (no OCR needed).
+New in v4:
+- Map unlocking (P1->P12): >=20 questions + >=80% accuracy unlock next page
+- Stars per page (80/90/95%) and visible progress on map
+- Badge wall: daily streak, perfect day, speedrun milestones, level milestones, unlock milestones, wrong-book cleared
+- Player name (default: Ian)
+- Confetti celebration for unlocks/level/badges
 
-Deploy: push `index.html` + `questions.js` to GitHub Pages root.
+Deploy to GitHub Pages: commit `index.html` (and keep existing `questions.js`).
