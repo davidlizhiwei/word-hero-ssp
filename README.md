@@ -1,11 +1,6 @@
-# Word Hero – SSP (P1–P12) v2
+# Word Hero – SSP v3.2 (Spacing Fix)
 
-Improvements:
-- Modern UI (color + glass panels)
-- Better spacing in extracted English phrases
-- Speech voice picker + rate/pitch control (uses browser TTS)
-- More modes: MCQ EN->ZH, MCQ ZH->EN, Listen->ZH, Spelling, Flashcards, 60s Speed Run
-- Gamification: XP + Level, streak bonus, daily challenge, wrong-answer weighting
+This build fixes the most critical issue: missing spaces inside English phrases extracted from the PDFs.
+It segments concatenated phrases like `wakeupyourbody` → `wake up your body`, `takepicturesofthegiantpandas` → `take pictures of the giant pandas`, etc.
 
-## Deploy to GitHub Pages
-Upload `index.html` and `questions.js` to repo root, then Settings → Pages → main /(root).
+Deploy: push `index.html` + `questions.js` to GitHub Pages root.
