@@ -236,7 +236,7 @@
         <div class="badge">🎮 等级：<b id="lvText">1</b>　|　连胜奖励：连胜 ≥ 5 额外 +1 XP</div>
         <div style="height:10px"></div>
         <div class="bar"><div id="xpBar"></div></div>
-        <div class="mut" style="margin-top:8px">快捷键：<span class="kbd">Enter</span> 下一题/提交拼写　<span class="kbd">Space</span> 播放发音</div>
+        <div class="mut" style="margin-top:8px">快捷键：<span class="kbd">Enter</span> 下一题　<span class="kbd">Ctrl/⌘ + Enter</span> 提交拼写　<span class="kbd">Space</span> 播放发音</div>
 
         <div style="height:14px"></div>
         <div class="mut">当前页：</div>
@@ -737,7 +737,7 @@ function renderQuestion(){
   } else if(q.type === "spell_zh2en"){
     const inp = document.createElement("input");
     inp.type = "text";
-    inp.placeholder = "输入英文（不区分大小写，空格会自动处理）";
+    inp.placeholder = "输入英文（空格可用）。提交：点击“提交”或 Ctrl/⌘+Enter";
     inp.id = "spellInput";
     optionsEl.appendChild(inp);
 
@@ -1005,21 +1005,28 @@ document.addEventListener("keydown", (e)=>{
   const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : "";
   const isTyping = tag === "input" || tag === "textarea" || (e.target && e.target.isContentEditable);
 
-  // Space: only act as "play audio" when NOT typing (otherwise it blocks input space)
+  // Space: only act as "play audio" when NOT typing
   if(e.code === "Space" && !isTyping){
     e.preventDefault();
     playAudio();
   }
 
-  // Enter: when typing in spelling input, treat Enter as submit; otherwise Next (if enabled)
   if(e.key === "Enter"){
     const spell = document.getElementById("spellInput");
+
+    // In spelling input: avoid accidental submit caused by IME/confirm key.
+    // Use Ctrl+Enter or Cmd+Enter to submit.
     if(spell && e.target === spell && mode !== "flash"){
-      e.preventDefault();
-      answerSpell();
-      bumpDailyBadges();
-      return;
+      if(e.isComposing || e.keyCode === 229) return; // IME composing
+      if(e.ctrlKey || e.metaKey){
+        e.preventDefault();
+        answerSpell();
+        bumpDailyBadges();
+      }
+      return; // normal Enter does nothing here
     }
+
+    // Outside typing: Enter goes to next (if enabled)
     if(!nextBtn.disabled && !isTyping){
       e.preventDefault();
       next();
