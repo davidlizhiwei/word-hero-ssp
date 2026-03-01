@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Word Hero - SSP (P1–P12)</title>
+<style>
+  :root { --bd:#e7e7e7; --mut:#666; --ok:#1a7f37; --bad:#cf222e; --bg:#fafafa; }
+  body { font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Arial; margin: 18px; background: var(--bg); }
+  .wrap { max-width: 980px; margin: 0 auto; }
+  h1 { margin: 10px 0 6px; }
+  .sub { color: var(--mut); margin: 0 0 14px; }
+  .top { display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom: 12px;}
+  .pill { padding:6px 10px; border:1px solid var(--bd); border-radius:999px; background:#fff; }
+  .grid { display:grid; grid-template-columns: 320px 1fr; gap: 12px; }
+  @media (max-width: 900px){ .grid { grid-template-columns: 1fr; } }
+  .card { border:1px solid var(--bd); border-radius:16px; padding:14px; background:#fff; }
+  .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+  select, input[type="text"] { padding:10px 12px; border:1px solid var(--bd); border-radius:12px; font-size:16px; width: 100%; }
+  button { padding:10px 12px; border:1px solid var(--bd); border-radius:12px; font-size:16px; background:#fff; cursor:pointer; }
+  button:hover { border-color:#bbb; }
+  button.primary { background:#111; color:#fff; border-color:#111; }
+  button.primary:hover { opacity: .92; }
+  button.block { width: 100%; text-align:left; }
+  .q { font-size: 20px; margin: 0 0 12px; white-space: pre-line; }
+  .msg { margin-top: 10px; font-size: 16px; min-height: 22px; }
+  .ok { border-color: var(--ok) !important; }
+  .bad { border-color: var(--bad) !important; }
+  .mut { color: var(--mut); font-size: 13px; }
+  .hr { height:1px; background:var(--bd); margin: 12px 0; }
+  .list { max-height: 420px; overflow:auto; border:1px solid var(--bd); border-radius:12px; padding:10px; }
+  .tag { display:inline-block; padding:2px 8px; border:1px solid var(--bd); border-radius:999px; font-size:12px; color:var(--mut); background:#fff; }
+  .kbd { font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas; font-size: 12px; padding: 1px 6px; border:1px solid var(--bd); border-radius: 6px; background:#fff; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Word Hero 🧠⚡（SSP P1–P12）</h1>
+  <p class="sub">适合 10–12 岁：闯关练词汇 + 错题加权复习 + 每日挑战。离线可用（浏览器打开即可）。</p>
+
+  <div class="top">
+    <span class="pill" id="statScore">Score: 0</span>
+    <span class="pill" id="statStreak">Streak: 0</span>
+    <span class="pill" id="statToday">Today: 0/10</span>
+    <span class="pill" id="statWrong">Wrong Bank: 0</span>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="row">
+        <button class="primary" onclick="startDaily()">每日挑战（10题）</button>
+        <button onclick="startWrongBank()">错题本</button>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="mut">按课文页练习：</div>
+      <select id="pageSelect" onchange="renderVocabList()"></select>
+      <div class="row" style="margin-top:8px;">
+        <button class="primary" onclick="startPage()">开始练这一页</button>
+        <button onclick="startAll()">全量随机</button>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="mut">词汇预览（点一下就朗读英文）：</div>
+      <div class="list" id="vocabList"></div>
+
+      <div class="hr"></div>
+      <div class="mut">
+        快捷键：<span class="kbd">Enter</span> 下一题 / 提交拼写
+      </div>
+      <div class="row" style="margin-top:10px;">
+        <button onclick="resetProgress()">重置进度</button>
+        <button onclick="exportProgress()">导出进度</button>
+        <button onclick="importProgress()">导入进度</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="row" style="justify-content:space-between;">
+        <span class="tag" id="modeTag">Mode: -</span>
+        <span class="tag" id="pageTag">Page: -</span>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="q" id="question">点击左侧“每日挑战”开始。</div>
+      <div id="options"></div>
+      <div class="msg" id="msg"></div>
+
+      <div class="row" style="margin-top:12px;">
+        <button id="nextBtn" class="primary" onclick="next()" disabled>下一题 ▶</button>
+        <button onclick="showAnswer()">显示答案</button>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="mut">
+        规则：答错的题会被“加权”，更频繁出现，直到你把它答对（权重降低）。
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="./questions.js"></script>
+<script>
+/** ---------- Storage ---------- **/
+const KEY = "wordhero_ssp_v1";
+function loadState(){
+  const s = localStorage.getItem(KEY);
+  if(!s) return {
+    score: 0,
+    streak: 0,
+    wrongWeights: {}, // qid -> weight (1..5)
+    today: { date: todayKey(), done: 0, correct: 0 }
+  };
+  try { return JSON.parse(s); } catch(e){ return null; }
+}
+function saveState(){ localStorage.setItem(KEY, JSON.stringify(state)); }
+function todayKey(){
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const dd = String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${dd}`;
+}
+let state = loadState() || loadState(); // best effort
+if(state.today?.date !== todayKey()){
+  state.today = { date: todayKey(), done: 0, correct: 0 };
+  saveState();
+}
+
+/** ---------- Data ---------- **/
+const PAGES = Object.keys(window.SSP_DATA).sort((a,b)=>Number(a.slice(1))-Number(b.slice(1)));
+const QUESTIONS = window.SSP_QUESTIONS;
+
+/** ---------- UI ---------- **/
+const statScore = document.getElementById("statScore");
+const statStreak = document.getElementById("statStreak");
+const statToday = document.getElementById("statToday");
+const statWrong = document.getElementById("statWrong");
+const questionEl = document.getElementById("question");
+const optionsEl = document.getElementById("options");
+const msgEl = document.getElementById("msg");
+const nextBtn = document.getElementById("nextBtn");
+const modeTag = document.getElementById("modeTag");
+const pageTag = document.getElementById("pageTag");
+const pageSelect = document.getElementById("pageSelect");
+const vocabList = document.getElementById("vocabList");
+
+function renderStats(){
+  statScore.textContent = `Score: ${state.score}`;
+  statStreak.textContent = `Streak: ${state.streak}`;
+  statToday.textContent = `Today: ${state.today.done}/10`;
+  const wrongCount = Object.keys(state.wrongWeights).length;
+  statWrong.textContent = `Wrong Bank: ${wrongCount}`;
+}
+function toast(t){ msgEl.textContent = t; }
+
+/** ---------- Speech ---------- **/
+function speak(text){
+  try{
+    if(!("speechSynthesis" in window)) return;
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "en-US";
+    u.rate = 0.95;
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+/** ---------- Vocab list ---------- **/
+function initPageSelect(){
+  pageSelect.innerHTML = "";
+  for(const p of PAGES){
+    const opt = document.createElement("option");
+    opt.value = p;
+    opt.textContent = `${p} · ${SSP_DATA[p].title || ""}`;
+    pageSelect.appendChild(opt);
+  }
+}
+function renderVocabList(){
+  const p = pageSelect.value;
+  const items = SSP_DATA[p]?.items || [];
+  vocabList.innerHTML = "";
+  items.forEach(it=>{
+    const btn = document.createElement("button");
+    btn.className = "block";
+    btn.innerHTML = `<div><b>${it.en}</b></div><div class="mut">${it.zh || ""}</div>`;
+    btn.onclick = ()=> speak(it.en);
+    vocabList.appendChild(btn);
+  });
+}
+
+/** ---------- Quiz engine ---------- **/
+let mode = "idle";          // daily | page | all | wrong
+let page = null;            // current page
+let pool = [];              // array of question indices (in QUESTIONS)
+let currentIdx = -1;        // index in QUESTIONS
+let locked = false;
+let showAnsCache = "";
+
+function setMode(m, p){
+  mode = m;
+  page = p || null;
+  modeTag.textContent = `Mode: ${m}`;
+  pageTag.textContent = `Page: ${page || "-"}`;
+}
+
+function buildPool(){
+  let indices = [];
+  if(mode === "page" && page){
+    indices = QUESTIONS.map((q,i)=> q.p === page ? i : -1).filter(i=>i>=0);
+  } else if(mode === "wrong"){
+    const wrongSet = new Set(Object.keys(state.wrongWeights));
+    indices = QUESTIONS.map((q,i)=> wrongSet.has(q.id) ? i : -1).filter(i=>i>=0);
+  } else {
+    indices = QUESTIONS.map((q,i)=> i);
+  }
+  // apply weights
+  pool = [];
+  for(const i of indices){
+    const q = QUESTIONS[i];
+    const w = state.wrongWeights[q.id] || 1;
+    for(let k=0;k<w;k++) pool.push(i);
+  }
+  if(pool.length === 0){
+    pool = indices.length ? indices.slice() : QUESTIONS.map((_,i)=>i);
+  }
+}
+
+function pickQuestion(){
+  const r = Math.floor(Math.random() * pool.length);
+  return pool[r];
+}
+
+function renderQuestion(){
+  locked = false;
+  nextBtn.disabled = true;
+  optionsEl.innerHTML = "";
+  msgEl.textContent = "";
+  showAnsCache = "";
+
+  currentIdx = pickQuestion();
+  const q = QUESTIONS[currentIdx];
+
+  if(q.type === "mcq_en2zh"){
+    questionEl.textContent = q.prompt;
+    q.options.forEach((opt, idx)=>{
+      const b = document.createElement("button");
+      b.textContent = `${String.fromCharCode(65+idx)}. ${opt}`;
+      b.onclick = ()=> answerMCQ(idx, b);
+      optionsEl.appendChild(b);
+    });
+    showAnsCache = `答案：${q.options[q.answer_index]}\n英文：${q.en}`;
+    // speak English for learning
+    speak(q.en);
+  } else if(q.type === "spell_zh2en"){
+    questionEl.textContent = q.prompt;
+    const inp = document.createElement("input");
+    inp.type = "text";
+    inp.placeholder = "输入英文（不区分大小写，空格会自动处理）";
+    inp.id = "spellInput";
+    optionsEl.appendChild(inp);
+
+    const submit = document.createElement("button");
+    submit.className = "primary";
+    submit.textContent = "提交";
+    submit.onclick = ()=> answerSpell();
+    optionsEl.appendChild(submit);
+
+    showAnsCache = `答案：${q.answer}`;
+    // focus
+    setTimeout(()=>{ inp.focus(); }, 0);
+  }
+}
+
+function normalize(s){
+  return String(s || "").trim().replace(/\s+/g," ").toLowerCase();
+}
+
+function markWrong(qid){
+  const w = state.wrongWeights[qid] || 1;
+  state.wrongWeights[qid] = Math.min(5, w+1);
+}
+function markRight(qid){
+  const w = state.wrongWeights[qid] || 1;
+  const nw = Math.max(1, w-1);
+  if(nw === 1) delete state.wrongWeights[qid];
+  else state.wrongWeights[qid] = nw;
+}
+
+function afterAnswer(correct, q){
+  if(correct){
+    state.score += 1;
+    state.streak += 1;
+    markRight(q.id);
+  } else {
+    state.streak = 0;
+    markWrong(q.id);
+  }
+
+  // daily
+  if(mode === "daily"){
+    state.today.done += 1;
+    if(correct) state.today.correct += 1;
+  }
+
+  saveState();
+  renderStats();
+  nextBtn.disabled = false;
+
+  if(mode === "daily" && state.today.done >= 10){
+    nextBtn.textContent = "今日已完成 ✅（再来一题可练习）";
+  } else {
+    nextBtn.textContent = "下一题 ▶";
+  }
+}
+
+function answerMCQ(choice, btn){
+  if(locked) return;
+  locked = true;
+  const q = QUESTIONS[currentIdx];
+  const buttons = Array.from(optionsEl.querySelectorAll("button"));
+  buttons[q.answer_index].classList.add("ok");
+
+  const correct = (choice === q.answer_index);
+  if(correct){
+    toast("✅ 对！继续保持～");
+  } else {
+    btn.classList.add("bad");
+    toast("❌ 错！这题会更常出现，直到你拿下它。");
+  }
+  afterAnswer(correct, q);
+}
+
+function answerSpell(){
+  if(locked) return;
+  locked = true;
+  const q = QUESTIONS[currentIdx];
+  const inp = document.getElementById("spellInput");
+  const val = normalize(inp.value);
+  const ans = normalize(q.answer);
+  const correct = (val === ans);
+  if(correct){
+    toast("✅ 拼对了！");
+  } else {
+    toast(`❌ 不对。正确答案：${q.answer}`);
+  }
+  // speak answer
+  speak(q.answer);
+  afterAnswer(correct, q);
+}
+
+function next(){
+  buildPool();
+  renderQuestion();
+}
+
+function showAnswer(){
+  if(!showAnsCache){
+    toast("这题没有答案缓存（先开始练习）。");
+    return;
+  }
+  toast(showAnsCache);
+}
+
+/** ---------- Modes ---------- **/
+function startDaily(){
+  setMode("daily", null);
+  buildPool();
+  renderQuestion();
+}
+function startPage(){
+  const p = pageSelect.value;
+  setMode("page", p);
+  buildPool();
+  renderQuestion();
+}
+function startAll(){
+  setMode("all", null);
+  buildPool();
+  renderQuestion();
+}
+function startWrongBank(){
+  setMode("wrong", null);
+  buildPool();
+  renderQuestion();
+  if(Object.keys(state.wrongWeights).length === 0){
+    toast("错题本为空。先做几题，把错题攒起来 😄");
+  }
+}
+
+/** ---------- Import/Export ---------- **/
+function exportProgress(){
+  const blob = new Blob([JSON.stringify(state, null, 2)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "wordhero_ssp_progress.json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+function importProgress(){
+  const inp = document.createElement("input");
+  inp.type = "file";
+  inp.accept = "application/json";
+  inp.onchange = async ()=>{
+    const file = inp.files[0];
+    if(!file) return;
+    try{
+      const txt = await file.text();
+      const obj = JSON.parse(txt);
+      if(!obj || typeof obj !== "object") throw new Error("bad");
+      state = obj;
+      if(state.today?.date !== todayKey()){
+        state.today = { date: todayKey(), done: 0, correct: 0 };
+      }
+      saveState();
+      renderStats();
+      toast("✅ 已导入进度");
+    }catch(e){
+      toast("❌ 导入失败：文件格式不对");
+    }
+  };
+  inp.click();
+}
+
+function resetProgress(){
+  if(!confirm("确定要重置进度吗？（分数/错题/连胜都会清空）")) return;
+  localStorage.removeItem(KEY);
+  state = loadState();
+  renderStats();
+  toast("已重置。");
+}
+
+/** ---------- Keyboard ---------- **/
+document.addEventListener("keydown", (e)=>{
+  if(e.key === "Enter"){
+    if(!nextBtn.disabled){
+      next();
+      return;
+    }
+    const spell = document.getElementById("spellInput");
+    if(spell){
+      answerSpell();
+    }
+  }
+});
+
+/** ---------- Init ---------- **/
+initPageSelect();
+renderVocabList();
+renderStats();
+</script>
+</body>
+</html>
