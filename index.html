@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Word Hero - SSP (P1–P12) v4</title>
+<title>Word Hero - SSP (P1–P12) v4.1</title>
 <style>
   :root{
     --bg:#0b1020;
@@ -199,7 +199,7 @@
 <div class="wrap">
   <div class="hero">
     <div>
-      <h1>Word Hero 🧠⚡（SSP P1–P12）v4</h1>
+      <h1>Word Hero 🧠⚡（SSP P1–P12）v4.1</h1>
       <div class="sub">给 Ian 的闯关版：🗺️ 地图解锁 + 🏅 勋章收集 + ⏱️ 冲刺破纪录（更像游戏，少点“做题味”）</div>
     </div>
     <div class="pills">
@@ -1002,11 +1002,30 @@ function renamePlayer(){
 
 /** -------- Keyboard -------- **/
 document.addEventListener("keydown", (e)=>{
-  if(e.code === "Space"){ e.preventDefault(); playAudio(); }
+  const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : "";
+  const isTyping = tag === "input" || tag === "textarea" || (e.target && e.target.isContentEditable);
+
+  // Space: only act as "play audio" when NOT typing (otherwise it blocks input space)
+  if(e.code === "Space" && !isTyping){
+    e.preventDefault();
+    playAudio();
+  }
+
+  // Enter: when typing in spelling input, treat Enter as submit; otherwise Next (if enabled)
   if(e.key === "Enter"){
-    if(!nextBtn.disabled){ next(); bumpDailyBadges(); return; }
     const spell = document.getElementById("spellInput");
-    if(spell && mode !== "flash"){ answerSpell(); bumpDailyBadges(); }
+    if(spell && e.target === spell && mode !== "flash"){
+      e.preventDefault();
+      answerSpell();
+      bumpDailyBadges();
+      return;
+    }
+    if(!nextBtn.disabled && !isTyping){
+      e.preventDefault();
+      next();
+      bumpDailyBadges();
+      return;
+    }
   }
 });
 
