@@ -1,6 +1,6 @@
-# Word Hero – SSP v3.2 (Spacing Fix)
+# Word Hero – SSP v3.3 (Word-level extraction)
 
-This build fixes the most critical issue: missing spaces inside English phrases extracted from the PDFs.
-It segments concatenated phrases like `wakeupyourbody` → `wake up your body`, `takepicturesofthegiantpandas` → `take pictures of the giant pandas`, etc.
+This build reconstructs English phrases using PDF word-level extraction (PyMuPDF `get_text("words")`),
+so spaces between words are preserved exactly as in the PDF (no OCR needed).
 
 Deploy: push `index.html` + `questions.js` to GitHub Pages root.

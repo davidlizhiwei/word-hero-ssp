@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Word Hero - SSP (P1–P12) v3.2</title>
+<title>Word Hero - SSP (P1–P12) v3.3</title>
 <style>
   :root{
     --bg:#0b1020;
@@ -134,7 +134,7 @@
 <div class="wrap">
   <div class="hero">
     <div>
-      <h1>Word Hero 🧠⚡（SSP P1–P12）v3.2</h1>
+      <h1>Word Hero 🧠⚡（SSP P1–P12）v3.3</h1>
       <div class="sub">更好看｜更好听｜更多玩法：选择题 / 拼写 / 听力选择 / 速度挑战 / 错题加权复习</div>
     </div>
     <div class="pills">
@@ -235,7 +235,7 @@
 <script src="./questions.js"></script>
 <script>
 /** -------- Storage -------- **/
-const KEY = "wordhero_ssp_v3.2";
+const KEY = "wordhero_ssp_v3.3";
 function todayKey(){
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
@@ -709,7 +709,7 @@ function exportProgress(){
   const blob = new Blob([JSON.stringify(state, null, 2)], {type:"application/json"});
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = "wordhero_ssp_progress_v3.2.json";
+  a.download = "wordhero_ssp_progress_v3.3.json";
   a.click();
   URL.revokeObjectURL(a.href);
 }
