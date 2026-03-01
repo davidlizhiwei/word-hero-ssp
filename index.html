@@ -3,101 +3,230 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Word Hero - SSP (P1–P12)</title>
+<title>Word Hero - SSP (P1–P12) v2</title>
 <style>
-  :root { --bd:#e7e7e7; --mut:#666; --ok:#1a7f37; --bad:#cf222e; --bg:#fafafa; }
-  body { font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Arial; margin: 18px; background: var(--bg); }
-  .wrap { max-width: 980px; margin: 0 auto; }
-  h1 { margin: 10px 0 6px; }
-  .sub { color: var(--mut); margin: 0 0 14px; }
-  .top { display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom: 12px;}
-  .pill { padding:6px 10px; border:1px solid var(--bd); border-radius:999px; background:#fff; }
-  .grid { display:grid; grid-template-columns: 320px 1fr; gap: 12px; }
-  @media (max-width: 900px){ .grid { grid-template-columns: 1fr; } }
-  .card { border:1px solid var(--bd); border-radius:16px; padding:14px; background:#fff; }
-  .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
-  select, input[type="text"] { padding:10px 12px; border:1px solid var(--bd); border-radius:12px; font-size:16px; width: 100%; }
-  button { padding:10px 12px; border:1px solid var(--bd); border-radius:12px; font-size:16px; background:#fff; cursor:pointer; }
-  button:hover { border-color:#bbb; }
-  button.primary { background:#111; color:#fff; border-color:#111; }
-  button.primary:hover { opacity: .92; }
-  button.block { width: 100%; text-align:left; }
-  .q { font-size: 20px; margin: 0 0 12px; white-space: pre-line; }
-  .msg { margin-top: 10px; font-size: 16px; min-height: 22px; }
-  .ok { border-color: var(--ok) !important; }
-  .bad { border-color: var(--bad) !important; }
-  .mut { color: var(--mut); font-size: 13px; }
-  .hr { height:1px; background:var(--bd); margin: 12px 0; }
-  .list { max-height: 420px; overflow:auto; border:1px solid var(--bd); border-radius:12px; padding:10px; }
-  .tag { display:inline-block; padding:2px 8px; border:1px solid var(--bd); border-radius:999px; font-size:12px; color:var(--mut); background:#fff; }
-  .kbd { font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas; font-size: 12px; padding: 1px 6px; border:1px solid var(--bd); border-radius: 6px; background:#fff; }
+  :root{
+    --bg:#0b1020;
+    --panel:rgba(255,255,255,.08);
+    --panel2:rgba(255,255,255,.12);
+    --bd:rgba(255,255,255,.14);
+    --txt:#f6f7fb;
+    --mut:rgba(255,255,255,.7);
+    --ok:#36c275;
+    --bad:#ff5a5f;
+    --pri:#7c5cff;
+    --pri2:#21d4fd;
+    --shadow: 0 12px 40px rgba(0,0,0,.35);
+  }
+  *{ box-sizing:border-box; }
+  body{
+    margin:0;
+    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Arial;
+    color:var(--txt);
+    background:
+      radial-gradient(900px 500px at 15% 15%, rgba(124,92,255,.35), transparent 60%),
+      radial-gradient(900px 500px at 85% 20%, rgba(33,212,253,.25), transparent 60%),
+      radial-gradient(900px 500px at 60% 90%, rgba(54,194,117,.18), transparent 60%),
+      var(--bg);
+  }
+  .wrap{ max-width: 1100px; margin: 0 auto; padding: 18px; }
+  .hero{
+    display:flex; justify-content:space-between; align-items:flex-end; gap:14px; flex-wrap:wrap;
+    padding: 16px 16px 10px;
+    border:1px solid var(--bd);
+    border-radius: 22px;
+    background: linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+    box-shadow: var(--shadow);
+  }
+  h1{ margin:0; font-size: 26px; letter-spacing:.2px;}
+  .sub{ margin: 6px 0 0; color:var(--mut); font-size: 13px; }
+  .pills{ display:flex; gap:10px; flex-wrap:wrap; }
+  .pill{
+    padding:8px 12px;
+    border:1px solid var(--bd);
+    border-radius:999px;
+    background: rgba(0,0,0,.18);
+    backdrop-filter: blur(10px);
+    font-size: 13px;
+    color: var(--txt);
+  }
+  .grid{ display:grid; grid-template-columns: 360px 1fr; gap: 14px; margin-top: 14px; }
+  @media (max-width: 980px){ .grid{ grid-template-columns:1fr; } }
+
+  .card{
+    border: 1px solid var(--bd);
+    border-radius: 22px;
+    background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+    box-shadow: var(--shadow);
+    overflow:hidden;
+  }
+  .card .hd{ padding: 14px 14px 10px; border-bottom:1px solid rgba(255,255,255,.08); }
+  .card .bd{ padding: 14px; }
+  .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+  .btn{
+    padding: 10px 12px;
+    border-radius: 14px;
+    border: 1px solid var(--bd);
+    color: var(--txt);
+    background: rgba(0,0,0,.18);
+    cursor:pointer;
+    transition: transform .06s ease, background .2s ease, border-color .2s ease;
+  }
+  .btn:hover{ border-color: rgba(255,255,255,.28); }
+  .btn:active{ transform: translateY(1px); }
+  .btn.primary{
+    border:none;
+    background: linear-gradient(135deg, var(--pri), var(--pri2));
+    color:#081018;
+    font-weight: 700;
+  }
+  .btn.ghost{ background: rgba(255,255,255,.06); }
+  .btn.block{ width:100%; text-align:left; }
+  select, input[type="text"], input[type="range"]{
+    width:100%;
+    padding: 11px 12px;
+    border-radius: 14px;
+    border: 1px solid var(--bd);
+    background: rgba(0,0,0,.18);
+    color: var(--txt);
+    outline:none;
+  }
+  .mut{ color: var(--mut); font-size: 12px; }
+  .list{
+    max-height: 340px;
+    overflow:auto;
+    padding: 8px;
+    border: 1px solid rgba(255,255,255,.10);
+    border-radius: 16px;
+    background: rgba(0,0,0,.12);
+  }
+  .q{
+    font-size: 22px;
+    margin: 0 0 12px;
+    white-space: pre-line;
+    letter-spacing: .2px;
+  }
+  .opt{ width:100%; margin: 8px 0; }
+  .ok{ border-color: rgba(54,194,117,.9) !important; box-shadow: 0 0 0 2px rgba(54,194,117,.20) inset; }
+  .bad{ border-color: rgba(255,90,95,.9) !important; box-shadow: 0 0 0 2px rgba(255,90,95,.20) inset; }
+  .msg{ min-height: 22px; margin-top: 10px; }
+  .bar{ height:10px; border-radius:999px; background: rgba(255,255,255,.10); overflow:hidden; }
+  .bar > div{ height:100%; width:0%; background: linear-gradient(90deg, var(--pri2), var(--pri)); transition: width .25s ease; }
+  .badge{
+    display:inline-flex; align-items:center; gap:8px;
+    padding: 8px 10px;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,.12);
+    background: rgba(0,0,0,.12);
+    font-size: 13px;
+  }
+  .kbd{
+    font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas;
+    font-size: 12px;
+    padding: 1px 6px;
+    border:1px solid rgba(255,255,255,.18);
+    border-radius: 8px;
+    background: rgba(0,0,0,.18);
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>Word Hero 🧠⚡（SSP P1–P12）</h1>
-  <p class="sub">适合 10–12 岁：闯关练词汇 + 错题加权复习 + 每日挑战。离线可用（浏览器打开即可）。</p>
-
-  <div class="top">
-    <span class="pill" id="statScore">Score: 0</span>
-    <span class="pill" id="statStreak">Streak: 0</span>
-    <span class="pill" id="statToday">Today: 0/10</span>
-    <span class="pill" id="statWrong">Wrong Bank: 0</span>
+  <div class="hero">
+    <div>
+      <h1>Word Hero 🧠⚡（SSP P1–P12）v2</h1>
+      <div class="sub">更好看｜更好听｜更多玩法：选择题 / 拼写 / 听力选择 / 速度挑战 / 错题加权复习</div>
+    </div>
+    <div class="pills">
+      <span class="pill" id="statLevel">Lv 1</span>
+      <span class="pill" id="statXP">XP 0/20</span>
+      <span class="pill" id="statScore">Score 0</span>
+      <span class="pill" id="statStreak">Streak 0</span>
+      <span class="pill" id="statToday">Daily 0/10</span>
+      <span class="pill" id="statWrong">Wrong 0</span>
+    </div>
   </div>
 
   <div class="grid">
+    <!-- Left -->
     <div class="card">
-      <div class="row">
-        <button class="primary" onclick="startDaily()">每日挑战（10题）</button>
-        <button onclick="startWrongBank()">错题本</button>
+      <div class="hd">
+        <div class="row">
+          <button class="btn primary" onclick="startDaily()">每日挑战（10题）</button>
+          <button class="btn ghost" onclick="startWrong()">错题本</button>
+        </div>
+        <div style="height:10px"></div>
+        <div class="row">
+          <button class="btn" onclick="startSpeed()">⏱ 60秒冲刺</button>
+          <button class="btn" onclick="startFlash()">🃏 闪卡</button>
+        </div>
       </div>
+      <div class="bd">
+        <div class="badge">🎮 等级：<b id="lvText">1</b>　|　连胜奖励：连胜 ≥ 5 额外 +1 XP</div>
+        <div style="height:10px"></div>
+        <div class="bar"><div id="xpBar"></div></div>
+        <div class="mut" style="margin-top:8px">快捷键：<span class="kbd">Enter</span> 下一题/提交拼写　<span class="kbd">Space</span> 播放发音</div>
 
-      <div class="hr"></div>
+        <div style="height:14px"></div>
+        <div class="mut">按页练：</div>
+        <select id="pageSelect" onchange="renderList()"></select>
+        <div class="row" style="margin-top:10px">
+          <button class="btn primary" onclick="startPage()">开始这一页</button>
+          <button class="btn" onclick="startAll()">全量随机</button>
+        </div>
 
-      <div class="mut">按课文页练习：</div>
-      <select id="pageSelect" onchange="renderVocabList()"></select>
-      <div class="row" style="margin-top:8px;">
-        <button class="primary" onclick="startPage()">开始练这一页</button>
-        <button onclick="startAll()">全量随机</button>
-      </div>
+        <div style="height:14px"></div>
+        <div class="mut">词汇预览（点一下读英文）：</div>
+        <div class="list" id="vocabList"></div>
 
-      <div class="hr"></div>
+        <div style="height:14px"></div>
+        <details>
+          <summary class="mut">⚙️ 语音设置（强烈建议调一下）</summary>
+          <div style="height:10px"></div>
+          <div class="mut">Voice</div>
+          <select id="voiceSelect"></select>
+          <div style="height:10px"></div>
+          <div class="mut">Rate <span id="rateText"></span></div>
+          <input id="rate" type="range" min="0.75" max="1.15" step="0.05" />
+          <div style="height:10px"></div>
+          <div class="mut">Pitch <span id="pitchText"></span></div>
+          <input id="pitch" type="range" min="0.8" max="1.2" step="0.05" />
+          <div style="height:10px"></div>
+          <div class="row">
+            <button class="btn" onclick="testVoice()">试听: 'Good job!'</button>
+            <button class="btn" onclick="toggleTTS()" id="ttsBtn">TTS: ON</button>
+          </div>
+        </details>
 
-      <div class="mut">词汇预览（点一下就朗读英文）：</div>
-      <div class="list" id="vocabList"></div>
-
-      <div class="hr"></div>
-      <div class="mut">
-        快捷键：<span class="kbd">Enter</span> 下一题 / 提交拼写
-      </div>
-      <div class="row" style="margin-top:10px;">
-        <button onclick="resetProgress()">重置进度</button>
-        <button onclick="exportProgress()">导出进度</button>
-        <button onclick="importProgress()">导入进度</button>
+        <div style="height:14px"></div>
+        <div class="row">
+          <button class="btn" onclick="exportProgress()">导出进度</button>
+          <button class="btn" onclick="importProgress()">导入进度</button>
+          <button class="btn" onclick="resetProgress()">重置</button>
+        </div>
       </div>
     </div>
 
+    <!-- Right -->
     <div class="card">
-      <div class="row" style="justify-content:space-between;">
-        <span class="tag" id="modeTag">Mode: -</span>
-        <span class="tag" id="pageTag">Page: -</span>
+      <div class="hd">
+        <div class="row" style="justify-content:space-between">
+          <span class="badge" id="modeTag">Mode: -</span>
+          <span class="badge" id="pageTag">Page: -</span>
+          <span class="badge" id="speedTag" style="display:none">⏱ <b id="speedTime">60</b>s　|　High: <b id="highScore">0</b></span>
+        </div>
       </div>
-
-      <div class="hr"></div>
-
-      <div class="q" id="question">点击左侧“每日挑战”开始。</div>
-      <div id="options"></div>
-      <div class="msg" id="msg"></div>
-
-      <div class="row" style="margin-top:12px;">
-        <button id="nextBtn" class="primary" onclick="next()" disabled>下一题 ▶</button>
-        <button onclick="showAnswer()">显示答案</button>
-      </div>
-
-      <div class="hr"></div>
-
-      <div class="mut">
-        规则：答错的题会被“加权”，更频繁出现，直到你把它答对（权重降低）。
+      <div class="bd">
+        <div class="q" id="question">点左侧开始。</div>
+        <div id="options"></div>
+        <div class="msg" id="msg"></div>
+        <div class="row" style="margin-top:12px">
+          <button class="btn primary" id="nextBtn" onclick="next()" disabled>下一题 ▶</button>
+          <button class="btn" onclick="playAudio()">🔊 播放</button>
+          <button class="btn" onclick="showAnswer()">👀 答案</button>
+        </div>
+        <div style="height:12px"></div>
+        <div class="mut">规则：错题会加权，更频繁出现；答对会降权。每日挑战 10 题打卡。</div>
       </div>
     </div>
   </div>
@@ -105,73 +234,179 @@
 
 <script src="./questions.js"></script>
 <script>
-/** ---------- Storage ---------- **/
-const KEY = "wordhero_ssp_v1";
+/** -------- Storage -------- **/
+const KEY = "wordhero_ssp_v2";
+function todayKey(){
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
 function loadState(){
   const s = localStorage.getItem(KEY);
   if(!s) return {
-    score: 0,
-    streak: 0,
-    wrongWeights: {}, // qid -> weight (1..5)
-    today: { date: todayKey(), done: 0, correct: 0 }
+    score: 0, streak: 0,
+    xp: 0, level: 1,
+    wrongWeights: {},  // qid -> weight (2..5)
+    today: { date: todayKey(), done: 0, correct: 0 },
+    tts: { enabled: true, voiceURI: "", rate: 0.95, pitch: 1.0 },
+    highScore: 0
   };
   try { return JSON.parse(s); } catch(e){ return null; }
 }
-function saveState(){ localStorage.setItem(KEY, JSON.stringify(state)); }
-function todayKey(){
-  const d = new Date();
-  const y = d.getFullYear();
-  const m = String(d.getMonth()+1).padStart(2,'0');
-  const dd = String(d.getDate()).padStart(2,'0');
-  return `${y}-${m}-${dd}`;
-}
-let state = loadState() || loadState(); // best effort
+let state = loadState() || loadState();
 if(state.today?.date !== todayKey()){
   state.today = { date: todayKey(), done: 0, correct: 0 };
-  saveState();
 }
+function saveState(){ localStorage.setItem(KEY, JSON.stringify(state)); }
 
-/** ---------- Data ---------- **/
-const PAGES = Object.keys(window.SSP_DATA).sort((a,b)=>Number(a.slice(1))-Number(b.slice(1)));
-const QUESTIONS = window.SSP_QUESTIONS;
-
-/** ---------- UI ---------- **/
+/** -------- UI refs -------- **/
+const statLevel = document.getElementById("statLevel");
+const statXP = document.getElementById("statXP");
 const statScore = document.getElementById("statScore");
 const statStreak = document.getElementById("statStreak");
 const statToday = document.getElementById("statToday");
 const statWrong = document.getElementById("statWrong");
+const lvText = document.getElementById("lvText");
+const xpBar = document.getElementById("xpBar");
+
 const questionEl = document.getElementById("question");
 const optionsEl = document.getElementById("options");
 const msgEl = document.getElementById("msg");
 const nextBtn = document.getElementById("nextBtn");
 const modeTag = document.getElementById("modeTag");
 const pageTag = document.getElementById("pageTag");
+const speedTag = document.getElementById("speedTag");
+const speedTimeEl = document.getElementById("speedTime");
+const highScoreEl = document.getElementById("highScore");
+
 const pageSelect = document.getElementById("pageSelect");
 const vocabList = document.getElementById("vocabList");
+const voiceSelect = document.getElementById("voiceSelect");
+const rateSlider = document.getElementById("rate");
+const pitchSlider = document.getElementById("pitch");
+const rateText = document.getElementById("rateText");
+const pitchText = document.getElementById("pitchText");
+const ttsBtn = document.getElementById("ttsBtn");
 
-function renderStats(){
-  statScore.textContent = `Score: ${state.score}`;
-  statStreak.textContent = `Streak: ${state.streak}`;
-  statToday.textContent = `Today: ${state.today.done}/10`;
-  const wrongCount = Object.keys(state.wrongWeights).length;
-  statWrong.textContent = `Wrong Bank: ${wrongCount}`;
+/** -------- Data -------- **/
+const PAGES = Object.keys(window.SSP_DATA).sort((a,b)=>Number(a.slice(1))-Number(b.slice(1)));
+const QUESTIONS = window.SSP_QUESTIONS;
+
+/** -------- Stats & XP -------- **/
+const XP_PER_LEVEL = 20;
+function addXP(n){
+  state.xp += n;
+  while(state.xp >= XP_PER_LEVEL){
+    state.xp -= XP_PER_LEVEL;
+    state.level += 1;
+    msg("🎉 升级啦！Level " + state.level);
+  }
 }
-function toast(t){ msgEl.textContent = t; }
+function renderStats(){
+  statLevel.textContent = `Lv ${state.level}`;
+  statXP.textContent = `XP ${state.xp}/${XP_PER_LEVEL}`;
+  statScore.textContent = `Score ${state.score}`;
+  statStreak.textContent = `Streak ${state.streak}`;
+  statToday.textContent = `Daily ${state.today.done}/10`;
+  statWrong.textContent = `Wrong ${Object.keys(state.wrongWeights).length}`;
+  lvText.textContent = state.level;
+  xpBar.style.width = `${Math.round((state.xp/XP_PER_LEVEL)*100)}%`;
+  highScoreEl.textContent = state.highScore || 0;
+}
+function msg(t){ msgEl.textContent = t; }
 
-/** ---------- Speech ---------- **/
+/** -------- TTS (better voice) -------- **/
+let voices = [];
+function pickBestVoice(){
+  // Prefer high quality voices commonly found on Apple devices
+  const prefer = [
+    /Alex/i, /Samantha/i, /Karen/i, /Daniel/i, /Moira/i,
+    /en-US/i, /en_GB/i, /English/i
+  ];
+  for(const r of prefer){
+    const v = voices.find(v => r.test(v.name) || r.test(v.voiceURI) || r.test(v.lang));
+    if(v) return v;
+  }
+  return voices.find(v => /^en/i.test(v.lang)) || voices[0];
+}
+function loadVoices(){
+  if(!("speechSynthesis" in window)) return;
+  voices = speechSynthesis.getVoices() || [];
+  voiceSelect.innerHTML = "";
+  // filter to English first but keep all as fallback
+  const ordered = [...voices].sort((a,b)=>{
+    const aEn = /^en/i.test(a.lang) ? 0 : 1;
+    const bEn = /^en/i.test(b.lang) ? 0 : 1;
+    return aEn - bEn;
+  });
+  ordered.forEach(v=>{
+    const opt = document.createElement("option");
+    opt.value = v.voiceURI;
+    opt.textContent = `${v.name} (${v.lang})`;
+    voiceSelect.appendChild(opt);
+  });
+
+  // set initial selection
+  let v = ordered.find(x=> x.voiceURI === state.tts.voiceURI);
+  if(!v){
+    v = pickBestVoice();
+    if(v) state.tts.voiceURI = v.voiceURI;
+  }
+  if(state.tts.voiceURI){
+    voiceSelect.value = state.tts.voiceURI;
+  }
+  rateSlider.value = state.tts.rate || 0.95;
+  pitchSlider.value = state.tts.pitch || 1.0;
+  rateText.textContent = rateSlider.value;
+  pitchText.textContent = pitchSlider.value;
+  ttsBtn.textContent = `TTS: ${state.tts.enabled ? "ON" : "OFF"}`;
+  saveState();
+}
+if("speechSynthesis" in window){
+  speechSynthesis.onvoiceschanged = loadVoices;
+  setTimeout(loadVoices, 50);
+}
+
 function speak(text){
+  if(!("speechSynthesis" in window)) return;
+  if(!state.tts.enabled) return;
   try{
-    if(!("speechSynthesis" in window)) return;
-    window.speechSynthesis.cancel();
+    speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
     u.lang = "en-US";
-    u.rate = 0.95;
-    window.speechSynthesis.speak(u);
+    u.rate = Number(state.tts.rate || 0.95);
+    u.pitch = Number(state.tts.pitch || 1.0);
+    const v = voices.find(v=> v.voiceURI === state.tts.voiceURI) || pickBestVoice();
+    if(v) u.voice = v;
+    speechSynthesis.speak(u);
   }catch(e){}
 }
+function playAudio(){
+  const q = currentQuestion();
+  if(q && q.en) speak(q.en);
+}
+function testVoice(){ speak("Good job! Keep going!"); }
+function toggleTTS(){
+  state.tts.enabled = !state.tts.enabled;
+  ttsBtn.textContent = `TTS: ${state.tts.enabled ? "ON" : "OFF"}`;
+  saveState();
+}
+voiceSelect.addEventListener("change", ()=>{
+  state.tts.voiceURI = voiceSelect.value;
+  saveState();
+});
+rateSlider.addEventListener("input", ()=>{
+  state.tts.rate = Number(rateSlider.value);
+  rateText.textContent = rateSlider.value;
+  saveState();
+});
+pitchSlider.addEventListener("input", ()=>{
+  state.tts.pitch = Number(pitchSlider.value);
+  pitchText.textContent = pitchSlider.value;
+  saveState();
+});
 
-/** ---------- Vocab list ---------- **/
-function initPageSelect(){
+/** -------- Vocab list -------- **/
+function initPages(){
   pageSelect.innerHTML = "";
   for(const p of PAGES){
     const opt = document.createElement("option");
@@ -180,59 +415,73 @@ function initPageSelect(){
     pageSelect.appendChild(opt);
   }
 }
-function renderVocabList(){
+function renderList(){
   const p = pageSelect.value;
   const items = SSP_DATA[p]?.items || [];
   vocabList.innerHTML = "";
   items.forEach(it=>{
-    const btn = document.createElement("button");
-    btn.className = "block";
-    btn.innerHTML = `<div><b>${it.en}</b></div><div class="mut">${it.zh || ""}</div>`;
-    btn.onclick = ()=> speak(it.en);
-    vocabList.appendChild(btn);
+    const b = document.createElement("button");
+    b.className = "btn block";
+    b.innerHTML = `<div style="font-weight:700">${it.en}</div><div class="mut">${it.zh || ""}</div>`;
+    b.onclick = ()=> speak(it.en);
+    vocabList.appendChild(b);
   });
 }
 
-/** ---------- Quiz engine ---------- **/
-let mode = "idle";          // daily | page | all | wrong
-let page = null;            // current page
-let pool = [];              // array of question indices (in QUESTIONS)
-let currentIdx = -1;        // index in QUESTIONS
+/** -------- Quiz engine -------- **/
+let mode = "idle"; // daily | page | all | wrong | speed | flash
+let page = null;
+let pool = [];
 let locked = false;
-let showAnsCache = "";
+let currentIdx = -1;
+let answerCache = "";
+let speed = { running:false, left:60, timer:null, score0:0 };
 
-function setMode(m, p){
-  mode = m;
-  page = p || null;
+function setMode(m, p=null){
+  mode = m; page = p;
   modeTag.textContent = `Mode: ${m}`;
   pageTag.textContent = `Page: ${page || "-"}`;
+  speedTag.style.display = (mode === "speed") ? "" : "none";
 }
 
 function buildPool(){
-  let indices = [];
+  let idxs = [];
   if(mode === "page" && page){
-    indices = QUESTIONS.map((q,i)=> q.p === page ? i : -1).filter(i=>i>=0);
+    idxs = QUESTIONS.map((q,i)=> q.p === page ? i : -1).filter(i=>i>=0);
   } else if(mode === "wrong"){
-    const wrongSet = new Set(Object.keys(state.wrongWeights));
-    indices = QUESTIONS.map((q,i)=> wrongSet.has(q.id) ? i : -1).filter(i=>i>=0);
+    const set = new Set(Object.keys(state.wrongWeights));
+    idxs = QUESTIONS.map((q,i)=> set.has(q.id) ? i : -1).filter(i=>i>=0);
   } else {
-    indices = QUESTIONS.map((q,i)=> i);
+    idxs = QUESTIONS.map((_,i)=> i);
   }
-  // apply weights
+
   pool = [];
-  for(const i of indices){
+  for(const i of idxs){
     const q = QUESTIONS[i];
     const w = state.wrongWeights[q.id] || 1;
     for(let k=0;k<w;k++) pool.push(i);
   }
-  if(pool.length === 0){
-    pool = indices.length ? indices.slice() : QUESTIONS.map((_,i)=>i);
-  }
+  if(pool.length === 0) pool = idxs.length ? idxs.slice() : QUESTIONS.map((_,i)=>i);
 }
-
-function pickQuestion(){
-  const r = Math.floor(Math.random() * pool.length);
-  return pool[r];
+function pick(){
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+function currentQuestion(){
+  if(currentIdx < 0) return null;
+  return QUESTIONS[currentIdx];
+}
+function normalize(s){
+  return String(s||"").trim().replace(/\s+/g," ").toLowerCase();
+}
+function markWrong(id){
+  const w = state.wrongWeights[id] || 1;
+  state.wrongWeights[id] = Math.min(5, w+1);
+}
+function markRight(id){
+  const w = state.wrongWeights[id] || 1;
+  const nw = Math.max(1, w-1);
+  if(nw === 1) delete state.wrongWeights[id];
+  else state.wrongWeights[id] = nw;
 }
 
 function renderQuestion(){
@@ -240,24 +489,31 @@ function renderQuestion(){
   nextBtn.disabled = true;
   optionsEl.innerHTML = "";
   msgEl.textContent = "";
-  showAnsCache = "";
+  answerCache = "";
 
-  currentIdx = pickQuestion();
-  const q = QUESTIONS[currentIdx];
+  if(mode === "flash"){
+    renderFlash();
+    return;
+  }
 
-  if(q.type === "mcq_en2zh"){
-    questionEl.textContent = q.prompt;
+  currentIdx = pick();
+  const q = currentQuestion();
+  if(!q){ questionEl.textContent = "没有题目"; return; }
+
+  questionEl.textContent = q.prompt;
+
+  if(q.type.startsWith("mcq")){
     q.options.forEach((opt, idx)=>{
       const b = document.createElement("button");
+      b.className = "btn opt";
       b.textContent = `${String.fromCharCode(65+idx)}. ${opt}`;
       b.onclick = ()=> answerMCQ(idx, b);
       optionsEl.appendChild(b);
     });
-    showAnsCache = `答案：${q.options[q.answer_index]}\n英文：${q.en}`;
-    // speak English for learning
-    speak(q.en);
+    answerCache = `答案：${q.options[q.answer_index]}\n英文：${q.en}`;
+    // speak for listen question or just helpful
+    if(q.type === "mcq_listen2zh") speak(q.en);
   } else if(q.type === "spell_zh2en"){
-    questionEl.textContent = q.prompt;
     const inp = document.createElement("input");
     inp.type = "text";
     inp.placeholder = "输入英文（不区分大小写，空格会自动处理）";
@@ -265,46 +521,37 @@ function renderQuestion(){
     optionsEl.appendChild(inp);
 
     const submit = document.createElement("button");
-    submit.className = "primary";
+    submit.className = "btn primary opt";
     submit.textContent = "提交";
-    submit.onclick = ()=> answerSpell();
+    submit.onclick = answerSpell;
     optionsEl.appendChild(submit);
 
-    showAnsCache = `答案：${q.answer}`;
-    // focus
-    setTimeout(()=>{ inp.focus(); }, 0);
+    answerCache = `答案：${q.answer}`;
+    setTimeout(()=> inp.focus(), 0);
   }
 }
 
-function normalize(s){
-  return String(s || "").trim().replace(/\s+/g," ").toLowerCase();
-}
+function afterAnswer(correct){
+  const q = currentQuestion();
+  if(!q) return;
 
-function markWrong(qid){
-  const w = state.wrongWeights[qid] || 1;
-  state.wrongWeights[qid] = Math.min(5, w+1);
-}
-function markRight(qid){
-  const w = state.wrongWeights[qid] || 1;
-  const nw = Math.max(1, w-1);
-  if(nw === 1) delete state.wrongWeights[qid];
-  else state.wrongWeights[qid] = nw;
-}
-
-function afterAnswer(correct, q){
   if(correct){
     state.score += 1;
     state.streak += 1;
+    // XP: base 1, streak bonus
+    addXP(1 + (state.streak>=5 ? 1 : 0));
     markRight(q.id);
   } else {
     state.streak = 0;
     markWrong(q.id);
   }
 
-  // daily
   if(mode === "daily"){
     state.today.done += 1;
     if(correct) state.today.correct += 1;
+  }
+  if(mode === "speed"){
+    // keep timer running; no daily count
   }
 
   saveState();
@@ -312,7 +559,9 @@ function afterAnswer(correct, q){
   nextBtn.disabled = false;
 
   if(mode === "daily" && state.today.done >= 10){
-    nextBtn.textContent = "今日已完成 ✅（再来一题可练习）";
+    nextBtn.textContent = "今日完成 ✅（继续可练习）";
+  } else if(mode === "speed"){
+    nextBtn.textContent = "继续 ▶";
   } else {
     nextBtn.textContent = "下一题 ▶";
   }
@@ -321,137 +570,193 @@ function afterAnswer(correct, q){
 function answerMCQ(choice, btn){
   if(locked) return;
   locked = true;
-  const q = QUESTIONS[currentIdx];
+  const q = currentQuestion();
   const buttons = Array.from(optionsEl.querySelectorAll("button"));
   buttons[q.answer_index].classList.add("ok");
 
   const correct = (choice === q.answer_index);
   if(correct){
-    toast("✅ 对！继续保持～");
+    msg("✅ Nice! +1");
   } else {
     btn.classList.add("bad");
-    toast("❌ 错！这题会更常出现，直到你拿下它。");
+    msg("❌ 再来！这题会更常出现。");
   }
-  afterAnswer(correct, q);
+
+  // speak English for reinforcement except listen mode already played
+  if(q.en) speak(q.en);
+  afterAnswer(correct);
 }
 
 function answerSpell(){
   if(locked) return;
   locked = true;
-  const q = QUESTIONS[currentIdx];
+  const q = currentQuestion();
   const inp = document.getElementById("spellInput");
   const val = normalize(inp.value);
   const ans = normalize(q.answer);
   const correct = (val === ans);
+
   if(correct){
-    toast("✅ 拼对了！");
+    msg("✅ 拼对了！很强。");
   } else {
-    toast(`❌ 不对。正确答案：${q.answer}`);
+    msg(`❌ 不对。正确：${q.answer}`);
   }
-  // speak answer
   speak(q.answer);
-  afterAnswer(correct, q);
+  afterAnswer(correct);
 }
 
 function next(){
+  if(mode === "speed" && !speed.running){
+    msg("冲刺结束。点“60秒冲刺”再来一局。");
+    return;
+  }
   buildPool();
   renderQuestion();
 }
 
 function showAnswer(){
-  if(!showAnsCache){
-    toast("这题没有答案缓存（先开始练习）。");
-    return;
-  }
-  toast(showAnsCache);
+  if(!answerCache) { msg("先开始做题。"); return; }
+  msg(answerCache);
 }
 
-/** ---------- Modes ---------- **/
-function startDaily(){
-  setMode("daily", null);
+/** -------- Modes -------- **/
+function startDaily(){ setMode("daily"); buildPool(); renderQuestion(); }
+function startPage(){ const p = pageSelect.value; setMode("page", p); buildPool(); renderQuestion(); }
+function startAll(){ setMode("all"); buildPool(); renderQuestion(); }
+function startWrong(){
+  setMode("wrong"); buildPool(); renderQuestion();
+  if(Object.keys(state.wrongWeights).length === 0) msg("错题本为空。先做几题再来 😄");
+}
+
+/** Speed run 60s **/
+function startSpeed(){
+  setMode("speed");
+  speed.running = true;
+  speed.left = 60;
+  speedTimeEl.textContent = speed.left;
+  msg("⏱ 开始！60 秒内尽量多答对。");
+  if(speed.timer) clearInterval(speed.timer);
+  speed.timer = setInterval(()=>{
+    speed.left -= 1;
+    speedTimeEl.textContent = speed.left;
+    if(speed.left <= 0){
+      clearInterval(speed.timer);
+      speed.running = false;
+      // high score by delta score during run
+      const runScore = state.score - speed.score0;
+      if(runScore > (state.highScore||0)){
+        state.highScore = runScore;
+        saveState();
+        renderStats();
+        msg("🏆 新纪录！High Score: " + runScore);
+      } else {
+        msg("结束！本局得分: " + runScore);
+      }
+      nextBtn.disabled = true;
+    }
+  }, 1000);
+  speed.score0 = state.score;
   buildPool();
   renderQuestion();
 }
-function startPage(){
+
+/** Flashcards **/
+let flash = { idxs: [], pos: 0, show:false };
+function startFlash(){
+  setMode("flash", pageSelect.value);
+  // flash uses page pool only for focus; if none, all
   const p = pageSelect.value;
-  setMode("page", p);
-  buildPool();
-  renderQuestion();
+  flash.idxs = QUESTIONS.map((q,i)=> q.p === p && q.type==="mcq_en2zh" ? i : -1).filter(i=>i>=0);
+  if(flash.idxs.length === 0) flash.idxs = QUESTIONS.map((q,i)=> q.type==="mcq_en2zh" ? i : -1).filter(i=>i>=0);
+  flash.pos = 0;
+  flash.show = false;
+  renderFlash();
 }
-function startAll(){
-  setMode("all", null);
-  buildPool();
-  renderQuestion();
-}
-function startWrongBank(){
-  setMode("wrong", null);
-  buildPool();
-  renderQuestion();
-  if(Object.keys(state.wrongWeights).length === 0){
-    toast("错题本为空。先做几题，把错题攒起来 😄");
-  }
+function renderFlash(){
+  optionsEl.innerHTML = "";
+  nextBtn.disabled = true;
+  const i = flash.idxs[flash.pos % flash.idxs.length];
+  const q = QUESTIONS[i];
+  const en = q.en, zh = q.zh;
+  questionEl.textContent = flash.show ? `${en}\n\n${zh}` : `${en}\n\n(点击“翻面”看中文)`;
+  speak(en);
+
+  const row = document.createElement("div");
+  row.className = "row";
+  const flip = document.createElement("button");
+  flip.className = "btn primary";
+  flip.textContent = flash.show ? "隐藏" : "翻面";
+  flip.onclick = ()=>{ flash.show = !flash.show; renderFlash(); };
+  const easy = document.createElement("button");
+  easy.className = "btn";
+  easy.textContent = "我会 ✅";
+  easy.onclick = ()=>{ addXP(1); state.score += 1; state.streak += 1; markRight(q.id); saveState(); renderStats(); flash.pos++; flash.show=false; renderFlash(); };
+  const hard = document.createElement("button");
+  hard.className = "btn";
+  hard.textContent = "不太会 ❌";
+  hard.onclick = ()=>{ state.streak=0; markWrong(q.id); saveState(); renderStats(); flash.pos++; flash.show=false; renderFlash(); };
+
+  row.appendChild(flip);
+  row.appendChild(easy);
+  row.appendChild(hard);
+  optionsEl.appendChild(row);
+
+  msg(`闪卡 ${flash.pos+1}/${flash.idxs.length}`);
 }
 
-/** ---------- Import/Export ---------- **/
+/** -------- Import/Export -------- **/
 function exportProgress(){
   const blob = new Blob([JSON.stringify(state, null, 2)], {type:"application/json"});
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = "wordhero_ssp_progress.json";
+  a.download = "wordhero_ssp_progress_v2.json";
   a.click();
   URL.revokeObjectURL(a.href);
 }
 function importProgress(){
   const inp = document.createElement("input");
-  inp.type = "file";
-  inp.accept = "application/json";
+  inp.type = "file"; inp.accept = "application/json";
   inp.onchange = async ()=>{
     const file = inp.files[0];
     if(!file) return;
     try{
       const txt = await file.text();
       const obj = JSON.parse(txt);
-      if(!obj || typeof obj !== "object") throw new Error("bad");
       state = obj;
       if(state.today?.date !== todayKey()){
         state.today = { date: todayKey(), done: 0, correct: 0 };
       }
-      saveState();
-      renderStats();
-      toast("✅ 已导入进度");
-    }catch(e){
-      toast("❌ 导入失败：文件格式不对");
-    }
+      saveState(); renderStats();
+      msg("✅ 已导入进度");
+    }catch(e){ msg("❌ 导入失败：文件格式不对"); }
   };
   inp.click();
 }
-
 function resetProgress(){
-  if(!confirm("确定要重置进度吗？（分数/错题/连胜都会清空）")) return;
+  if(!confirm("确定重置吗？分数/错题/等级都会清空")) return;
   localStorage.removeItem(KEY);
   state = loadState();
+  saveState();
   renderStats();
-  toast("已重置。");
+  msg("已重置。");
 }
 
-/** ---------- Keyboard ---------- **/
+/** -------- Keyboard -------- **/
 document.addEventListener("keydown", (e)=>{
+  if(e.code === "Space"){ e.preventDefault(); playAudio(); }
   if(e.key === "Enter"){
-    if(!nextBtn.disabled){
-      next();
-      return;
-    }
+    if(!nextBtn.disabled){ next(); return; }
     const spell = document.getElementById("spellInput");
-    if(spell){
-      answerSpell();
-    }
+    if(spell && mode !== "flash"){ answerSpell(); }
   }
 });
 
-/** ---------- Init ---------- **/
-initPageSelect();
-renderVocabList();
+/** -------- Init -------- **/
+initPages();
+renderList();
 renderStats();
+loadVoices();
+saveState();
 </script>
 </body>
 </html>

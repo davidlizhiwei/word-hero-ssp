@@ -1,20 +1,11 @@
-# Word Hero – SSP (P1–P12)
+# Word Hero – SSP (P1–P12) v2
 
-A tiny browser-based vocabulary trainer for kids (game-like quiz + wrong-answer weighting + daily challenge).
-Works offline: open `index.html` in any browser.
+Improvements:
+- Modern UI (color + glass panels)
+- Better spacing in extracted English phrases
+- Speech voice picker + rate/pitch control (uses browser TTS)
+- More modes: MCQ EN->ZH, MCQ ZH->EN, Listen->ZH, Spelling, Flashcards, 60s Speed Run
+- Gamification: XP + Level, streak bonus, daily challenge, wrong-answer weighting
 
-## Quick start (GitHub Pages)
-
-1. Create a new GitHub repository (e.g. `word-hero-ssp`)
-2. Upload **all files** in this folder (`index.html`, `questions.js`)
-3. Go to **Settings → Pages**
-4. Source: **Deploy from a branch**
-5. Branch: **main** / **(root)**
-6. Save. Your site will be:
-
-`https://<YOUR_GITHUB_USERNAME>.github.io/word-hero-ssp/`
-
-## Notes
-
-- Progress is stored in browser LocalStorage.
-- Use Export/Import to move progress between devices.
+## Deploy to GitHub Pages
+Upload `index.html` and `questions.js` to repo root, then Settings → Pages → main /(root).
