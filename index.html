@@ -51,8 +51,8 @@
     font-size: 13px;
     color: var(--txt);
   }
-  .grid{ display:grid; grid-template-columns: 390px 1fr; gap: 14px; margin-top: 14px; }
-  @media (max-width: 1020px){ .grid{ grid-template-columns:1fr; } }
+  .grid{ display:grid; grid-template-columns:1fr; gap:12px; margin-top:14px;}
+  @media (max-width: 1020px){ .grid{ display:grid; grid-template-columns:1fr; gap:12px; margin-top:14px;} }
 
   .card{
     border: 1px solid var(--bd);
@@ -65,6 +65,9 @@
   .card .bd{ padding: 14px; }
   .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
   .btn{
+    font-size:16px;
+    padding:14px 14px;
+
     padding: 10px 12px;
     border-radius: 14px;
     border: 1px solid var(--bd);
@@ -103,6 +106,8 @@
     background: rgba(0,0,0,.12);
   }
   .q{
+    font-size:24px;
+
     font-size: 22px;
     margin: 0 0 12px;
     white-space: pre-line;
@@ -193,6 +198,29 @@
   @keyframes fall{
     to{ transform: translateY(110vh) rotate(720deg); opacity: .0; }
   }
+
+.bottomBar{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  background:rgba(10,12,24,.95);
+  backdrop-filter:blur(10px);
+  border-top:1px solid rgba(255,255,255,.15);
+  padding:10px;
+  display:flex;
+  gap:10px;
+  justify-content:space-between;
+  z-index:200;
+}
+.bottomBar button{
+  flex:1;
+  font-size:16px;
+  padding:14px;
+  border-radius:14px;
+}
+body{ padding-bottom:90px; }
+
 </style>
 </head>
 <body>
@@ -1063,5 +1091,12 @@ renderBadges();
 loadVoices();
 saveState();
 </script>
+
+<div class="bottomBar">
+  <button class="btn primary" onclick="next()">下一题 ▶</button>
+  <button class="btn" onclick="playAudio()">🔊 播放</button>
+  <button class="btn" onclick="showAnswer()">👀 答案</button>
+</div>
+
 </body>
 </html>
